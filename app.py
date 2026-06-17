@@ -342,13 +342,25 @@ def generate_post(article):
 
     try:
         if provider == "openrouter":
-            text = _openai_compatible(
-                "https://openrouter.ai/api/v1", key,
+            extra = {"HTTP-Referer": "https://so-linkedin-generator.streamlit.app"}
+            models = [
+                "mistralai/mistral-7b-instruct:free",
+                "meta-llama/llama-3.1-8b-instruct:free",
+                "google/gemma-2-9b-it:free",
                 "meta-llama/llama-3.3-70b-instruct:free",
-                SYSTEM_PROMPT, prompt,
-                extra_headers={"HTTP-Referer": "https://so-linkedin-generator.streamlit.app"},
-            )
-            return text, None
+            ]
+            last_err = None
+            for model in models:
+                try:
+                    text = _openai_compatible(
+                        "https://openrouter.ai/api/v1", key,
+                        model, SYSTEM_PROMPT, prompt, extra_headers=extra,
+                    )
+                    return text, None
+                except Exception as e:
+                    last_err = e
+                    time.sleep(1)
+            return None, str(last_err)
 
         if provider == "groq":
             text = _openai_compatible(
