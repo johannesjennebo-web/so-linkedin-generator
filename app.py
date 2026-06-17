@@ -300,47 +300,85 @@ def make_prompt(article):
 
 
 def get_active_key():
-    """Returnerer (provider, key) — groq foretrækkes (gratis), derefter anthropic."""
-    groq_key = os.environ.get("GROQ_API_KEY", "").strip()
-    if groq_key:
-        return "groq", groq_key
-    anth_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
-    if anth_key:
-        return "anthropic", anth_key
+    """Returnerer (provider, key) — første match vinder."""
+    for provider, env_var in [
+        ("openrouter", "OPENROUTER_API_KEY"),
+        ("groq",       "GROQ_API_KEY"),
+        ("mistral",    "MISTRAL_API_KEY"),
+        ("anthropic",  "ANTHROPIC_API_KEY"),
+    ]:
+        val = os.environ.get(env_var, "").strip()
+        if val:
+            return provider, val
     return None, None
+
+
+def _openai_compatible(base_url, key, model, system, user_prompt, extra_headers=None):
+    """Fælles kald til OpenAI-kompatible API'er."""
+    headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
+    if extra_headers:
+        headers.update(extra_headers)
+    resp = requests.post(
+        f"{base_url}/chat/completions",
+        headers=headers,
+        json={
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user",   "content": user_prompt},
+            ],
+            "max_tokens": 1024,
+            "temperature": 0.72,
+        },
+        timeout=45,
+    )
+    resp.raise_for_status()
+    return resp.json()["choices"][0]["message"]["content"].strip()
 
 
 def generate_post(article):
     provider, key = get_active_key()
+    prompt = make_prompt(article)
 
-    if provider == "groq":
-        resp = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-            json={
-                "model": "llama-3.3-70b-versatile",
-                "messages": [
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user",   "content": make_prompt(article)},
-                ],
-                "max_tokens": 1024,
-                "temperature": 0.72,
-            },
-            timeout=30,
-        )
-        resp.raise_for_status()
-        return resp.json()["choices"][0]["message"]["content"].strip(), None
+    try:
+        if provider == "openrouter":
+            text = _openai_compatible(
+                "https://openrouter.ai/api/v1", key,
+                "meta-llama/llama-3.3-70b-instruct:free",
+                SYSTEM_PROMPT, prompt,
+                extra_headers={"HTTP-Referer": "https://so-linkedin-generator.streamlit.app"},
+            )
+            return text, None
 
-    if provider == "anthropic":
-        import anthropic
-        client = anthropic.Anthropic(api_key=key)
-        msg = client.messages.create(
-            model="claude-opus-4-8",
-            max_tokens=1024,
-            system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": make_prompt(article)}],
-        )
-        return msg.content[0].text.strip(), None
+        if provider == "groq":
+            text = _openai_compatible(
+                "https://api.groq.com/openai/v1", key,
+                "llama-3.3-70b-versatile",
+                SYSTEM_PROMPT, prompt,
+            )
+            return text, None
+
+        if provider == "mistral":
+            text = _openai_compatible(
+                "https://api.mistral.ai/v1", key,
+                "mistral-small-latest",
+                SYSTEM_PROMPT, prompt,
+            )
+            return text, None
+
+        if provider == "anthropic":
+            import anthropic
+            client = anthropic.Anthropic(api_key=key)
+            msg = client.messages.create(
+                model="claude-opus-4-8",
+                max_tokens=1024,
+                system=SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            return msg.content[0].text.strip(), None
+
+    except Exception as e:
+        return None, str(e)
 
     return None, "no_key"
 
