@@ -1,7 +1,6 @@
 """
-LinkedIn Generator — SuperOffice Blog
-Streamlit webapp: henter artikler, genererer LinkedIn-kladder
-Deploy gratis på https://streamlit.io/cloud
+SO Blog Agent — LinkedIn Post Generator
+Streamlit webapp · deploy på streamlit.io/cloud
 """
 import os
 import re
@@ -39,15 +38,117 @@ Din stil:
 - INGEN emojis (undtagen ét 👇 allersidst)
 - Nævn ikke "blog" eller "artikel" — skriv som om det er din egen indsigt"""
 
-CATEGORY_COLORS = {
-    "AI": "#6366f1",
-    "Sales": "#10b981",
-    "Service": "#f59e0b",
-    "Data": "#ef4444",
-    "Integration": "#3b82f6",
-    "Marketing": "#ec4899",
-    "CRM": "#8b5cf6",
+CAT_STYLE = {
+    "AI":          ("#e0e7ff", "#4338ca"),
+    "Sales":       ("#d1fae5", "#065f46"),
+    "Service":     ("#fef3c7", "#92400e"),
+    "Data":        ("#fee2e2", "#991b1b"),
+    "Integration": ("#fde8d0", "#c2410c"),
+    "Marketing":   ("#fce7f3", "#9d174d"),
+    "CRM":         ("#ede9fe", "#5b21b6"),
 }
+
+# ─── Page config ──────────────────────────────────────────────────────────────
+
+st.set_page_config(
+    page_title="SO Blog Agent",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+# ─── CSS ──────────────────────────────────────────────────────────────────────
+
+st.markdown("""
+<style>
+  /* App background */
+  .stApp { background: #f5f4f0; }
+
+  /* Hide sidebar toggle and branding */
+  [data-testid="stSidebar"] { display: none !important; }
+  [data-testid="collapsedControl"] { display: none !important; }
+  #MainMenu, footer { visibility: hidden; }
+
+  /* Content width */
+  .block-container {
+    padding: 2rem 2.5rem !important;
+    max-width: 900px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Stat card */
+  .stat-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px 22px;
+  }
+  .stat-label {
+    font-size: 11px; color: #9ca3af; font-weight: 600;
+    letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px;
+  }
+  .stat-value { font-size: 34px; font-weight: 700; color: #111827; line-height: 1.1; }
+
+  /* Article card */
+  .art-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px 20px 14px 20px;
+    margin-bottom: 8px;
+  }
+  .art-title { font-size: 15px; font-weight: 600; color: #111827; margin-bottom: 3px; }
+  .art-meta  { font-size: 12px; color: #9ca3af; margin-bottom: 10px; }
+
+  /* Badges */
+  .badge {
+    display: inline-block; border-radius: 20px;
+    font-size: 11px; font-weight: 500; padding: 2px 10px; margin-right: 4px;
+  }
+  .b-ny       { background: #fed7aa; color: #c2410c; }
+  .b-kladde   { background: #f3f4f6; color: #374151; }
+  .b-planlagt { background: #dbeafe; color: #1d4ed8; }
+  .b-udgivet  { background: #d1fae5; color: #065f46; }
+
+  /* "Generer post" primary button → dark */
+  div[data-testid="stButton"] > button[kind="primary"] {
+    background: #111827 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    white-space: nowrap !important;
+  }
+  div[data-testid="stButton"] > button[kind="primary"]:hover {
+    background: #374151 !important;
+  }
+
+  /* Tabs */
+  .stTabs [data-baseweb="tab-list"] { background: transparent; gap: 8px; }
+  .stTabs [data-baseweb="tab"] {
+    background: transparent; border: none;
+    font-size: 14px; color: #6b7280; padding: 8px 4px;
+  }
+  .stTabs [aria-selected="true"] {
+    color: #111827 !important; font-weight: 600;
+    border-bottom: 2px solid #111827 !important;
+  }
+
+  /* Radio as filter pills */
+  div[data-testid="stRadio"] > div { gap: 6px; }
+  div[data-testid="stRadio"] label {
+    border: 1px solid #e5e7eb; border-radius: 20px;
+    padding: 4px 14px; font-size: 13px;
+    background: white; cursor: pointer;
+  }
+  div[data-testid="stRadio"] label:has(input:checked) {
+    background: #111827; color: white; border-color: #111827;
+  }
+
+  /* Divider */
+  hr { border-color: #e5e7eb; margin: 12px 0; }
+</style>
+""", unsafe_allow_html=True)
 
 
 # ─── Scraping ─────────────────────────────────────────────────────────────────
@@ -80,9 +181,9 @@ def parse_date(raw):
 
 def guess_cat(title):
     t = title.lower()
-    if any(w in t for w in ["ai ", "artificial intelligence", "machine learning", "copilot", "chatgpt"]):
+    if any(w in t for w in ["ai ", "artificial intelligence", "machine learning", "copilot"]):
         return "AI"
-    if any(w in t for w in ["pipeline", "forecast", "quota", "revenue", "deal", "sales process"]):
+    if any(w in t for w in ["pipeline", "forecast", "quota", "revenue", "deal", "sales"]):
         return "Sales"
     if any(w in t for w in ["customer service", "support", "complaint", "helpdesk"]):
         return "Service"
@@ -157,9 +258,9 @@ def fetch_article(url):
         full_text = full_text[:MAX_BODY_CHARS] + "\n\n[afkortet]"
 
     return {
-        "titleEn": title,
-        "date":    parse_date(date_str),
-        "summary": parts[0][:300] if parts else "",
+        "titleEn":  title,
+        "date":     parse_date(date_str),
+        "summary":  parts[0][:300] if parts else "",
         "fullText": full_text,
     }
 
@@ -183,188 +284,289 @@ def load_articles():
             "fullText": data["fullText"],
             "url":      url,
         })
-        time.sleep(0.5)
+        time.sleep(0.4)
     return articles
 
 
-# ─── Hjælpefunktioner ─────────────────────────────────────────────────────────
+# ─── Helpers ──────────────────────────────────────────────────────────────────
 
 def api_key():
     return os.environ.get("ANTHROPIC_API_KEY", "").strip()
 
 
+def art_state(url):
+    return st.session_state.setdefault("states", {}).setdefault(
+        url, {"status": "ny", "post": None}
+    )
+
+
+def set_art_state(url, status=None, post=None):
+    s = art_state(url)
+    if status: s["status"] = status
+    if post is not None: s["post"] = post
+
+
 def make_prompt(article):
-    return f"""Du er Johannes Jennebo — Consulting Director for SuperOffice i Norden.
+    return (
+        f"Du er Johannes Jennebo — Consulting Director for SuperOffice i Norden.\n\n"
+        f"Skriv et LinkedIn-opslag på DANSK baseret på denne artikel.\n\n"
+        f"Titel: {article['titleEn']}\n"
+        f"Resumé: {article['summary']}\n\n"
+        f"Stil:\n"
+        f"- Start med en konkret situation eller observation — aldrig en generisk indledning\n"
+        f"- 5-8 korte afsnit (1-2 sætninger pr. afsnit)\n"
+        f"- Nordisk perspektiv, personlig og professionel stemme\n"
+        f"- Slut med et åbent spørgsmål til læserne\n"
+        f"- INGEN hashtags, INGEN emojis (undtagen 👇 sidst)\n\n"
+        f"Fuld artikeltekst:\n{article.get('fullText', '')[:4000]}"
+    )
 
-Skriv et LinkedIn-opslag på DANSK baseret på denne artikel.
 
-Titel: {article['titleEn']}
-Resumé: {article['summary']}
-
-Stil:
-- Start med en konkret situation eller observation — aldrig en generisk indledning
-- 5-8 korte afsnit (1-2 sætninger pr. afsnit)
-- Nordisk perspektiv, personlig og professionel stemme
-- Slut med et åbent spørgsmål til læserne
-- INGEN hashtags, INGEN emojis (undtagen 👇 sidst)
-- Skriv ikke "blogindlæg" eller "artikel"
-
-Fuld artikeltekst:
-{article.get('fullText', '')[:4000]}"""
+def generate_with_api(article):
+    try:
+        import anthropic
+        client = anthropic.Anthropic(api_key=api_key())
+        msg = client.messages.create(
+            model="claude-opus-4-8",
+            max_tokens=1024,
+            system=SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": make_prompt(article)}],
+        )
+        return msg.content[0].text.strip(), None
+    except Exception as e:
+        return None, str(e)
 
 
 def post_to_md(article, text):
     slug = article["url"].rstrip("/").split("/")[-1][:50]
-    return (
+    content = (
         f"# {article['titleEn']}\n\n"
         f"**Kilde:** {article['url']}\n"
         f"**Dato:** {article['date']}\n"
         f"**Status:** Kladde\n\n---\n\n{text}\n"
-    ), f"{article['date']}_{slug}.md"
+    )
+    filename = f"{article['date']}_{slug}.md"
+    return content, filename
 
 
-# ─── Side-config ──────────────────────────────────────────────────────────────
+def cat_badge(cat):
+    bg, fg = CAT_STYLE.get(cat, ("#f3f4f6", "#374151"))
+    return f'<span class="badge" style="background:{bg};color:{fg}">{cat}</span>'
 
-st.set_page_config(
-    page_title="LinkedIn Generator — SuperOffice",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
+
+def status_badge(status):
+    cls = {"ny": "b-ny", "kladde": "b-kladde", "planlagt": "b-planlagt", "udgivet": "b-udgivet"}.get(status, "b-kladde")
+    label = status.capitalize()
+    return f'<span class="badge {cls}">{label}</span>'
+
+
+def short_url(url):
+    return url.replace("https://", "").replace("http://", "")[:55]
+
+
+# ─── HEADER ───────────────────────────────────────────────────────────────────
 
 st.markdown("""
-<style>
-  .stButton > button { border-radius: 6px; }
-  .article-card { padding: 8px 10px; border-radius: 6px; margin-bottom: 4px;
-                  border: 1px solid #e5e7eb; cursor: pointer; }
-  .article-card:hover { background: #f9fafb; }
-  div[data-testid="stSidebar"] { min-width: 340px; }
-</style>
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px">
+  <div style="background:#0077B5;border-radius:12px;width:52px;height:52px;
+              display:flex;align-items:center;justify-content:center;flex-shrink:0">
+    <span style="color:white;font-weight:900;font-size:22px;font-family:serif">in</span>
+  </div>
+  <div>
+    <div style="font-size:22px;font-weight:700;color:#111827;line-height:1.2">SO Blog Agent</div>
+    <div style="font-size:13px;color:#6b7280">Læser hele artiklen — skriver bedre posts</div>
+  </div>
+</div>
 """, unsafe_allow_html=True)
 
 
-# ─── Sidebar: artikelliste ─────────────────────────────────────────────────────
+# ─── LOAD ARTIKLER ────────────────────────────────────────────────────────────
 
-with st.sidebar:
-    st.markdown("## SuperOffice Blog")
+with st.spinner("Henter artikler fra superoffice.com/blog..."):
+    articles = load_articles()
 
-    refresh = st.button("Hent nye artikler", use_container_width=True)
-    if refresh:
-        st.cache_data.clear()
-
-    with st.spinner("Henter artikler..."):
-        articles = load_articles()
-
-    if not articles:
-        st.error("Kunne ikke hente artikler. Tjek din internetforbindelse.")
-        st.stop()
-
-    cats = sorted({a["category"] for a in articles})
-    selected_cat = st.selectbox("Kategori", ["Alle"] + cats, label_visibility="collapsed")
-
-    filtered = articles if selected_cat == "Alle" else [a for a in articles if a["category"] == selected_cat]
-    st.caption(f"{len(filtered)} artikler")
-    st.divider()
-
-    for i, a in enumerate(filtered):
-        label = f"{a['date'][:7]}  ·  **{a['titleEn'][:48]}**{'…' if len(a['titleEn']) > 48 else ''}"
-        if st.button(label, key=f"a{i}", use_container_width=True):
-            st.session_state["article"] = a
-            st.session_state.pop("generated", None)
-
-
-# ─── Hovedområde ──────────────────────────────────────────────────────────────
-
-article = st.session_state.get("article")
-
-if article is None:
-    st.markdown("### Vælg en artikel til venstre")
-    st.markdown(
-        "Applikationen henter de seneste artikler fra SuperOffice-bloggen "
-        "og hjælper dig med at skrive LinkedIn-opslag i din stemme."
-    )
+if not articles:
+    st.error("Kunne ikke hente artikler. Tjek din internetforbindelse.")
     st.stop()
 
-# Artikelheader
-col_title, col_meta = st.columns([3, 1])
-with col_title:
-    st.subheader(article["titleEn"])
-with col_meta:
-    cat   = article["category"]
-    color = CATEGORY_COLORS.get(cat, "#6b7280")
-    st.markdown(f'<span style="background:{color};color:#fff;padding:3px 10px;border-radius:12px;font-size:12px">{cat}</span>&nbsp;&nbsp;`{article["date"]}`', unsafe_allow_html=True)
 
-st.markdown(f"[Åbn original artikel]({article['url']})")
-st.markdown(f"*{article['summary']}*")
+# ─── STATS ROW ────────────────────────────────────────────────────────────────
 
-st.divider()
+states      = st.session_state.get("states", {})
+planlagt_n  = sum(1 for a in articles if states.get(a["url"], {}).get("status") == "planlagt")
+udgivet_n   = sum(1 for a in articles if states.get(a["url"], {}).get("status") == "udgivet")
+full_text_n = sum(1 for a in articles if len(a.get("fullText", "")) > 200)
 
-# Genereringssktion
-st.markdown("### LinkedIn-opslag")
-
-has_key = bool(api_key())
-
-if has_key:
-    # ── API-tilstand: automatisk generering ──────────────────────────────────
-    if st.button("Generer automatisk", type="primary"):
-        with st.spinner("Genererer med Claude..."):
-            try:
-                import anthropic
-                client = anthropic.Anthropic(api_key=api_key())
-                msg = client.messages.create(
-                    model="claude-opus-4-8",
-                    max_tokens=1024,
-                    system=SYSTEM_PROMPT,
-                    messages=[{"role": "user", "content": make_prompt(article)}],
-                )
-                st.session_state["generated"] = msg.content[0].text.strip()
-            except Exception as exc:
-                st.error(f"Fejl: {exc}")
-else:
-    # ── Manuel tilstand: copy-paste til claude.ai ─────────────────────────────
-    st.info(
-        "Manuel tilstand — brug din gratis claude.ai-konto. "
-        "Kopiér prompten nedenfor, indsæt den på claude.ai, "
-        "og kom tilbage og indsæt svaret."
-    )
-
-    with st.expander("Vis prompt (klik for at kopiere)", expanded=True):
-        prompt_text = make_prompt(article)
-        st.code(prompt_text, language=None)
-
-    st.link_button("Åbn claude.ai i ny fane", "https://claude.ai", use_container_width=True)
-
-    st.markdown("**Indsæt svaret fra Claude her:**")
-    manual = st.text_area("", height=280, placeholder="Paste LinkedIn-tekst her...", key="manual_paste")
-    if st.button("Brug denne tekst", type="primary") and manual.strip():
-        st.session_state["generated"] = manual.strip()
-
-
-# ── Vis og gem kladde ─────────────────────────────────────────────────────────
-
-if "generated" in st.session_state:
-    st.divider()
-    st.markdown("### Kladde")
-
-    edited = st.text_area(
-        "Redigér inden du poster:",
-        value=st.session_state["generated"],
-        height=400,
-        key="editor",
-    )
-
-    md_content, filename = post_to_md(article, edited)
-
-    col_dl, col_copy = st.columns(2)
-    with col_dl:
-        st.download_button(
-            label="Download som .md",
-            data=md_content.encode("utf-8"),
-            file_name=filename,
-            mime="text/markdown",
-            use_container_width=True,
+c1, c2, c3, c4 = st.columns(4)
+for col, label, val in [
+    (c1, "ARTIKLER",      len(articles)),
+    (c2, "MED FULD TEKST", full_text_n),
+    (c3, "PLANLAGT",       planlagt_n),
+    (c4, "UDGIVET",        udgivet_n),
+]:
+    with col:
+        st.markdown(
+            f'<div class="stat-card">'
+            f'<div class="stat-label">{label}</div>'
+            f'<div class="stat-value">{val}</div>'
+            f'</div>',
+            unsafe_allow_html=True,
         )
-    with col_copy:
-        st.button("Kopiér tekst", on_click=lambda: None, use_container_width=True,
-                  help="Marker teksten i feltet ovenfor og brug Ctrl/Cmd+C")
 
-    st.caption(f"Gem filen i  projects/so-blog-agent/posts/{filename}")
+st.markdown("<div style='margin:20px 0 4px'></div>", unsafe_allow_html=True)
+
+
+# ─── TABS ─────────────────────────────────────────────────────────────────────
+
+tab_kø, tab_kal, tab_sched = st.tabs(["Kø", "Kalender", "Scheduler"])
+
+with tab_kal:
+    st.info("Kalender-visning kommer snart.")
+
+with tab_sched:
+    st.info("Scheduler kommer snart.")
+
+with tab_kø:
+
+    # Filter pills + sort
+    fcol, scol = st.columns([4, 1])
+    with fcol:
+        status_filter = st.radio(
+            "", ["Alle", "Kladde", "Planlagt", "Udgivet"],
+            horizontal=True, label_visibility="collapsed",
+        )
+    with scol:
+        st.markdown(
+            '<div style="text-align:right;padding-top:8px;font-size:13px;color:#6b7280">'
+            'Nyeste først ↓</div>',
+            unsafe_allow_html=True,
+        )
+
+    # Filter
+    def matches_filter(a):
+        s = art_state(a["url"])["status"]
+        if status_filter == "Alle":    return True
+        if status_filter == "Kladde":  return s in ("ny", "kladde")
+        if status_filter == "Planlagt": return s == "planlagt"
+        if status_filter == "Udgivet": return s == "udgivet"
+        return True
+
+    filtered = [a for a in articles if matches_filter(a)]
+
+    if not filtered:
+        st.markdown(
+            '<div style="text-align:center;padding:40px;color:#9ca3af">Ingen artikler her endnu.</div>',
+            unsafe_allow_html=True,
+        )
+
+    # ─── Artikel-liste ────────────────────────────────────────────────────────
+    for art in filtered:
+        state   = art_state(art["url"])
+        url     = art["url"]
+        cat     = art["category"]
+        status  = state["status"]
+        has_post = bool(state["post"])
+
+        # Card HTML (title, meta, badges)
+        st.markdown(
+            f'<div class="art-card">'
+            f'<div class="art-title">{art["titleEn"]}</div>'
+            f'<div class="art-meta">'
+            f'{art["date"][:10]} &nbsp;·&nbsp; {short_url(url)}'
+            f'</div>'
+            f'{cat_badge(cat)} {status_badge(status)}'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+        # Knap-række
+        btn_col, mark_col = st.columns([6, 2])
+
+        with btn_col:
+            btn_label = "Generer post" if not has_post else "Regenerer"
+            if st.button(btn_label, key=f"gen_{url}", type="primary"):
+                st.session_state[f"open_{url}"] = True
+
+        with mark_col:
+            if has_post:
+                mark = st.selectbox(
+                    "", ["Kladde", "Planlagt", "Udgivet"],
+                    key=f"mark_{url}",
+                    label_visibility="collapsed",
+                    index=["kladde", "planlagt", "udgivet"].index(status) if status in ["kladde","planlagt","udgivet"] else 0,
+                )
+                set_art_state(url, status=mark.lower())
+
+        # ─── Udvidet genererings-panel ────────────────────────────────────────
+        if st.session_state.get(f"open_{url}"):
+
+            has_key = bool(api_key())
+
+            if has_key and not has_post:
+                with st.spinner(f"Genererer opslag..."):
+                    post_text, err = generate_with_api(art)
+                if err:
+                    st.error(f"Fejl: {err}")
+                else:
+                    set_art_state(url, status="kladde", post=post_text)
+                    st.rerun()
+
+            elif has_post:
+                # Vis og rediger eksisterende post
+                with st.container():
+                    edited = st.text_area(
+                        "Redigér opslag:", value=state["post"],
+                        height=320, key=f"edit_{url}",
+                    )
+                    if edited != state["post"]:
+                        set_art_state(url, post=edited)
+
+                    md_content, filename = post_to_md(art, edited)
+                    dl_col, close_col = st.columns([2, 1])
+                    with dl_col:
+                        st.download_button(
+                            "Download .md", data=md_content.encode(),
+                            file_name=filename, mime="text/markdown",
+                            key=f"dl_{url}",
+                        )
+                    with close_col:
+                        if st.button("Luk", key=f"close_{url}"):
+                            st.session_state[f"open_{url}"] = False
+                            st.rerun()
+
+            else:
+                # Manuel tilstand: vis prompt
+                prompt = make_prompt(art)
+                st.markdown(
+                    '<div style="background:#f9fafb;border:1px solid #e5e7eb;'
+                    'border-radius:10px;padding:14px 16px;margin:8px 0">'
+                    '<div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:8px">'
+                    'Kopiér denne prompt og indsæt den på claude.ai</div>'
+                    '</div>',
+                    unsafe_allow_html=True,
+                )
+                st.code(prompt, language=None)
+                st.link_button("Åbn claude.ai", "https://claude.ai", use_container_width=False)
+
+                st.markdown("**Indsæt svaret fra Claude her:**")
+                pasted = st.text_area("", height=280, key=f"paste_{url}",
+                                      placeholder="Paste LinkedIn-tekst her...")
+
+                pcol1, pcol2 = st.columns([2, 1])
+                with pcol1:
+                    if st.button("Gem kladde", key=f"save_{url}", type="primary") and pasted.strip():
+                        set_art_state(url, status="kladde", post=pasted.strip())
+                        st.session_state[f"open_{url}"] = False
+                        st.rerun()
+                with pcol2:
+                    if st.button("Luk", key=f"closemanual_{url}"):
+                        st.session_state[f"open_{url}"] = False
+                        st.rerun()
+
+        st.markdown("<div style='margin-bottom:4px'></div>", unsafe_allow_html=True)
+
+    # Opdater-knap i bunden
+    st.markdown("<div style='margin-top:16px'></div>", unsafe_allow_html=True)
+    if st.button("Hent nye artikler", use_container_width=False):
+        st.cache_data.clear()
+        st.rerun()
