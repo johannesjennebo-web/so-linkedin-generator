@@ -1,17 +1,125 @@
 {
   "fetched": "2026-06-24",
   "articles": [
-    {"title": "CRM and ERP integration: Why your numbers don't add up", "url": "https://www.superoffice.com/blog/crm-and-erp-integration-why-your-numbers-dont-add-up/", "date": "2026-06-12"},
-    {"title": "50+ CRM statistics that matter in 2026", "url": "https://www.superoffice.com/blog/50-crm-statistics/", "date": "2026-06-05"},
-    {"title": "Quality data is the backbone of any AI strategy", "url": "https://www.superoffice.com/blog/quality-data-and-ai-strategy/", "date": "2026-06-03"},
-    {"title": "SuperOffice CRM is the #1 CRM in the Nordics", "url": "https://www.superoffice.com/blog/superoffice-1-crm-in-the-nordics/", "date": "2026-06-01"},
-    {"title": "Why customer complaints are good for business (yes, really)", "url": "https://www.superoffice.com/blog/customer-complaints-good-for-business/", "date": "2026-06-01"},
-    {"title": "7 ways to reduce customer service response times", "url": "https://www.superoffice.com/blog/response-times/", "date": "2026-05-04"},
-    {"title": "Customisable sales dashboards: Track pipeline and forecasting", "url": "https://www.superoffice.com/blog/customizable-sales-dashboards/", "date": "2026-04-28"},
-    {"title": "How to build a high-converting sales pipeline: 12 strategies", "url": "https://www.superoffice.com/blog/sales-pipeline-management-tips/", "date": "2026-04-16"},
-    {"title": "How events accelerate the customer journey", "url": "https://www.superoffice.com/blog/how-events-accelerate-the-customer-journey/", "date": "2026-04-08"},
-    {"title": "SuperNotes and ethical AI in CRM: how your meeting data stays secure", "url": "https://www.superoffice.com/blog/supernotes-and-ethical-ai-in-crm/", "date": "2026-02-20"},
-    {"title": "Stop losing time on scattered customer data", "url": "https://www.superoffice.com/blog/customer-data-silos/", "date": "2026-02-10"},
-    {"title": "Best CRM for European businesses: Choose the right fit", "url": "https://www.superoffice.com/blog/best-crm-for-european-businesses/", "date": "2026-02-05"}
+    {
+      "title": "CRM and ERP integration: Why your numbers don't add up",
+      "url": "https://www.superoffice.com/blog/crm-and-erp-integration-why-your-numbers-dont-add-up/",
+      "date": "2026-06-12",
+      "posts": [
+        "Dine CRM- og ERP-tal stemmer ikke overens. Det er ikke et IT-problem.\n\nDet er et dataproblem — og det koster dig trovedærdighed i ledelsesrummet.\n\n- Sælgerne taster i CRM. Økonomi taster det samme i ERP. Fejl opstår i mellemrummet.\n- Prognoser bygget på CRM-data alene mangler historisk kontekst.\n- Integration er ikke et stort projekt. Det er én beslutning.\n\nTakeaway: Ét sandhedspunkt er ikke luksus. Det er forudsætningen for at styre.",
+        "To systemer. Dobbelt datainput. Én sandhed — ingen af dem rigtige.\n\nNår CRM og ERP ikke er integrerede:\n- Salgschefen ser én pipeline. CFO’en ser noget andet.\n- Manuelle overførsler = fejl. Garanteret.\n- Ingen kan stole på tallene til et ledelsesmøde.\n\nTakeaway: Integration er ikke IT. Det er trovedærdighed.",
+        "“Vores tal stemmer ikke overens.”\n\nDen sætning opstår, når CRM og ERP taler to forskellige sprog.\n- CRM tracker relationer og pipeline.\n- ERP tracker ordrer og faktura.\n- Ingen integration = to versioner af virkeligheden.\n\nTakeaway: Integrér systemerne. Eller fortsæt med at forklare uoverensstemmelserne."
+      ]
+    },
+    {
+      "title": "50+ CRM statistics that matter in 2026",
+      "url": "https://www.superoffice.com/blog/50-crm-statistics/",
+      "date": "2026-06-05",
+      "posts": [
+        "Kun 34% af en sælgers tid bruges på at sælge.\n\nResten forsvinder i administration, møder og jagten på information.\n\n- 61% af de bedst præsterende salgsledere automatiserer via CRM. Mod 46% hos de svage.\n- 65% af sælgere med mobil CRM-adgang rammer kvoten. Uden: 22%.\n- 40% af AI-CRM-projekter fejler inden 2028 — fordi datagrundlaget ikke er i orden.\n\nTakeaway: Din CRM-investering er kun så god som din datakvalitet og adoption.",
+        "65% af sælgere med mobil CRM-adgang rammer deres kvote. Uden: 22%.\n\nDet er ikke en tilfældighed.\n- De bedste salgsteams bruger CRM aktivt — ikke for at rapportere, men for at sælge.\n- Adoption er alt. Et CRM ingen bruger er et dyrt telefonkatalog.\n\nTakeaway: CRM-ROI handler ikke om features. Det handler om brug.",
+        "40% af AI-CRM-projekter fejler inden 2028. Ikke pga. AI’en — pga. datagrundlaget.\n\n- Ringe data + kraftfuld AI = hurtige, forkerte beslutninger.\n- Teknologi er det nemme. Ændring af adfærd er det svære.\n\nTakeaway: Investr i datakvalitet før AI. Rækkefølgen betyder noget."
+      ]
+    },
+    {
+      "title": "Quality data is the backbone of any AI strategy",
+      "url": "https://www.superoffice.com/blog/quality-data-and-ai-strategy/",
+      "date": "2026-06-03",
+      "posts": [
+        "AI virker kun, hvis din data gør. Det lyder indlysende. Men 60% fejler netop her.\n\n- Garbage in, garbage out — gælder dobbelt for AI.\n- CRM-data er din vigtigste AI-kilde: kontakthistorik, pipeline, kundenadfærd.\n- Rens data én gang. Byg processer der holder den ren.\n\nTakeaway: Din AI-strategi starter i CRM, ikke i modellen.",
+        "De fleste AI-strategier fejler — ikke i implementeringen, men i grundlaget.\n\n- CRM-data er din mest værdifulde AI-kilde.\n- Men de fleste CRM-databaser er 30-50% ufuldstændige.\n- Du kan ikke bygge intelligens på et fundament af gæt.\n\nTakeaway: Rens din CRM-data. Det er din AI-strategi, trin 1.",
+        "AI er ikke magisk. Den er matematisk. Og matematik kræver korrekte input.\n\n- 60% af AI-projekter fejler pga. datakvalitet, ikke algoritmen.\n- Datakvalitet er ikke IT’s ansvar. Det er salgslederens.\n\nTakeaway: Din AI-ambition starter med en CRM-oprydning."
+      ]
+    },
+    {
+      "title": "SuperOffice CRM is the #1 CRM in the Nordics",
+      "url": "https://www.superoffice.com/blog/superoffice-1-crm-in-the-nordics/",
+      "date": "2026-06-01",
+      "posts": [
+        "G2 har talt. SuperOffice er #1 CRM i Norden.\n\nIkke selvudnævnt. Baseret på vurderinger fra brugerne selv.\n- Højeste score på ease of use og support i kategorien.\n- GDPR-compliant by design — ikke som en eftertanke.\n\nTakeaway: Det er ikke en titel. Det er tillid fra nordiske B2B-virksomheder.",
+        "Brugerne har talt. SuperOffice er #1 CRM i Norden på G2.\n\n- Bedst på ease of use og support i kategorien.\n- Bygget til nordiske forretningsprocesser — ikke tilpasset fra en US-løsning.\n\nTakeaway: De bedste anbefalinger kommer fra dem, der bruger det dagligt.",
+        "Hvad gør et CRM til det bedste i Norden? Ikke features. Fit.\n\n- GDPR-compliance by design.\n- Lokal support der forstår din forretningskontekst.\n- Arbejdsgang der matcher nordisk B2B.\n\nTakeaway: G2 rangerer SuperOffice #1 i Norden. Kunderne forklarer hvorfor."
+      ]
+    },
+    {
+      "title": "Why customer complaints are good for business (yes, really)",
+      "url": "https://www.superoffice.com/blog/customer-complaints-good-for-business/",
+      "date": "2026-06-01",
+      "posts": [
+        "Kundeklager er ikke problemer. De er gratis produktudvikling.\n\n96% af utilfredse kunder klager ikke — de forsvinder bare.\n- En klage er en chance for retention, hvis du handler hurtigt.\n- CRM logger klagen, tildeler den og sikrer follow-up.\n\nTakeaway: Tak dine klagende kunder. De er dem, der stadig tror på dig.",
+        "De fleste virksomheder frygter kundeklager. De bedste søger dem.\n\n- En klage er et signal: kunden er stadig engageret.\n- Klager håndteret inden for 24 timer øger loyalitet med op til 70%.\n\nTakeaway: Klag-håndtering er retention-strategi. Behandl det som sådan.",
+        "Din mest loyale kunde i morgen er din klagende kunde i dag — hvis du håndterer det rigtigt.\n\n- 70% af kunder der klager og får en god løsning, køber igen.\n- 96% klager aldrig. Ingen chance for at redde forholdet.\n\nTakeaway: Byg et system til at modtage klager. Det er retention-infrastruktur."
+      ]
+    },
+    {
+      "title": "7 ways to reduce customer service response times",
+      "url": "https://www.superoffice.com/blog/response-times/",
+      "date": "2026-05-04",
+      "posts": [
+        "Kunderne venter. Konkurrenterne gør det ikke.\n\n90% forventer svar inden for 10 minutter. De fleste virksomheder bruger timer.\n- Automatiseret routing sender sagen til den rigtige person første gang.\n- Fælles CRM-indbakke eliminerer ”hvem tager den?”-problemet.\n\nTakeaway: Response-tid er et salgsargument. Ikke bare et support-KPI.",
+        "10 minutter. Det er hvad 90% af kunderne forventer som maksimal svartid.\n\nDe fleste support-teams bruger timer. Eller dage.\n- Automatiseret routing sikrer rigtig person fra start.\n- Hurtigere respons = højere NPS = lavere churn.\n\nTakeaway: Svartid er ikke et support-KPI. Det er et forretningsparameter.",
+        "Kunden venter. Konkurrenten svarer. Det er den simple sandhed bag churn.\n\n- Virksomheder der svarer inden 1 time har 7x højere chance for at kvalificere leads.\n- CRM + automatisering = konsistent responstid uanset hvem der er på vagt.\n\nTakeaway: Byg processer der svarer hurtigt. Ikke kulturer der lover det."
+      ]
+    },
+    {
+      "title": "Customisable sales dashboards: Track pipeline and forecasting",
+      "url": "https://www.superoffice.com/blog/customizable-sales-dashboards/",
+      "date": "2026-04-28",
+      "posts": [
+        "Hvad du ikke måler, styrer du ikke.\n\nDe fleste salgsteams har et dashboard. Færre bruger det aktivt. Forskellen er relevans.\n- Brugerdefinerede views: salgsleder og konsulent ser det der er relevant for dem.\n- Forecasting baseret på aktivitet, ikke mavefornæmmelse.\n\nTakeaway: Et dashboard er ikke rapportering. Det er beslutningstagen.",
+        "”Hvad er status på pipeline?” Det burde aldrig være et spørgsmål. Det burde være synligt.\n\n- Real-time data i stedet for manuelle rapporter.\n- Skræddersyede dashboards i CRM: alle ser det der er relevant for dem.\n\nTakeaway: Et godt dashboard gør salgsmødet overflødigt som statusmøde.",
+        "Forecast eller gæt? De fleste pipelines er det sidste, selvom vi kalder det det første.\n\n- 79% af salgsledere er ikke tilfredse med nøjagtigheden af deres forecast.\n- Årsagen: data der ikke er opdateret eller struktureret.\n\nTakeaway: Du kan ikke forbedre det du ikke måler præcist."
+      ]
+    },
+    {
+      "title": "How to build a high-converting sales pipeline: 12 strategies",
+      "url": "https://www.superoffice.com/blog/sales-pipeline-management-tips/",
+      "date": "2026-04-16",
+      "posts": [
+        "De fleste pipelines er en ønskeliste. Ikke en plan.\n\n79% af leads konverterer aldrig — primært pga. manglende follow-up.\n- Struktureret pipeline øger win-rate med 28%.\n- CRM giver overblik over hvad der hænger fast — og hvorfor.\n\nTakeaway: En pipeline er en proces. Ikke et regneark.",
+        "79% af leads konverterer aldrig. Ikke fordi produktet er forkert. Men fordi follow-up mangler.\n\n- De salgsteams der strukturerer pipeline vinder mere. Konsekvent.\n- 12 konkrete strategier til at bygge en pipeline der konverterer.\n\nTakeaway: Pipeline er ikke et pipeline-problem. Det er et disciplin-problem.",
+        "En stærk pipeline har tre ting: volumen, velocity og synlighed. De fleste fokuserer kun på volumen.\n\n- Velocity: hvor hurtigt bevæger deals sig?\n- Synlighed: hvem ejer hvad, og hvad er næste trin?\n\nTakeaway: 12 strategier der gør pipeline til en plan, ikke en ønskeliste."
+      ]
+    },
+    {
+      "title": "How events accelerate the customer journey",
+      "url": "https://www.superoffice.com/blog/how-events-accelerate-the-customer-journey/",
+      "date": "2026-04-08",
+      "posts": [
+        "Events er ikke markedsføring. De er en accelerator.\n\nPersonlig kontakt forkorter salgscyklussen mere end noget andet kanal.\n- Events skaber pipeline-progression der ellers ville tage måneder.\n- CRM tracker hvem der deltog og hvad næste skridt er.\n\nTakeaway: Brug events strategisk. Mål effekten — i CRM.",
+        "Hvad er den hurtigste vej fra ”interesseret” til ”klar til at købe”? Personlig kontakt.\n\n- Events forkorter salgscyklussen markant.\n- Men kun hvis du tracker hvem der deltog og hvad der blev sagt.\n\nTakeaway: Events uden CRM-tracking er markedsføring. Med CRM-tracking er det pipeline.",
+        "De bedste events skaber ikke leads. De accelererer dem. Der er forskel.\n\n- En lead du møder på event er 5x nemmere at booke møde med efterfølgende.\n- Momentum er kortvarigt — du har 48 timer til at følge op.\n\nTakeaway: Mål dine events i pipeline-progression, ikke i visitkort."
+      ]
+    },
+    {
+      "title": "SuperNotes and ethical AI in CRM: how your meeting data stays secure",
+      "url": "https://www.superoffice.com/blog/supernotes-and-ethical-ai-in-crm/",
+      "date": "2026-02-20",
+      "posts": [
+        "AI i CRM rejser et spørgsmål ingen taler nok om: Hvem ejer møderefer aterne?\n\nSuperNotes holder mødedata i dit CRM. Ikke i en US-sky.\n- GDPR-compliant by design.\n- Dine kundesamtaler er dine — ikke træningsdata for et andet produkt.\n\nTakeaway: Vælg AI-løsninger du kontrollerer. Ikke dem der kontrollerer dig.",
+        "Dine møder med kunder er fortrolige. Er dine mødereferater det?\n\n- SuperNotes holder data i dit CRM — din infrastruktur, dine regler.\n- GDPR-compliant. Ingen data til tredjepart.\n\nTakeaway: Vælg AI du kan stå inde for — overfor dine kunder og lovgivningen.",
+        "”Vi bruger AI til mødereferater.” — Hvem gemmer dem, og hvor?\n\n- US-baserede AI: stærk teknologi, svag datasuverænitet.\n- SuperNotes: AI-noter der forbliver i dit CRM og din jurisdiktion.\n\nTakeaway: Det du deler i et møde, bør kontrolleres af dig."
+      ]
+    },
+    {
+      "title": "Stop losing time on scattered customer data",
+      "url": "https://www.superoffice.com/blog/customer-data-silos/",
+      "date": "2026-02-10",
+      "posts": [
+        "Dine sælgere bruger 23% af deres tid på at lede efter kundeinfo. Det er to timer om dagen. Spildt.\n\n- Data spredt over mail, Excel og Teams.\n- Ny sælger på en konto? Fra nul. Igen.\n\nTakeaway: Din vigtigste salgsressource er tid. Spild den ikke på datasøgning.",
+        "Ny sælger overtager en konto. Ingen noter. Ingen historik. Fra nul.\n\nDet er prisen for scattered customer data.\n- 23% af sælgernes tid går til at finde information der allerede eksisterer.\n\nTakeaway: Kundehistorik er forretningskapital. Opbevar den derefter.",
+        "Tre steder din kundeinfo bor: Mail. Excel. ”Jeg tror Lars har det.”\n\n- Gennemsnitlig sælger bruger 23% af arbejdstiden på at finde information.\n- Onboarding tager 3x så lang tid uden centraliseret data.\n\nTakeaway: Stop med at gemme kundeinfo i hoveder og indbakker."
+      ]
+    },
+    {
+      "title": "Best CRM for European businesses: Choose the right fit",
+      "url": "https://www.superoffice.com/blog/best-crm-for-european-businesses/",
+      "date": "2026-02-05",
+      "posts": [
+        "Europæiske virksomheder har specifikke krav. De fleste CRM’er er ikke bygget til dem.\n\nGDPR, datasuverænitet, lokal support — det er ikke nice-to-have. Det er krav.\n- US-CRM: stærk teknologi, svag compliance-profil.\n- Europæisk CRM: bygget til den regulatoriske virkelighed du opererer i.\n\nTakeaway: Vælg et CRM der forstår, at du opererer under europæisk lovgivning.",
+        "GDPR er ikke en ulempe. Det er et salgsargument.\n\n- US-CRM: compliance som eftertanke.\n- Europæisk CRM: compliance by design.\n- Datasuverænitet: kunden ejer data, du kontrollerer opbevaring.\n\nTakeaway: Gør din compliance til en styrke, ikke en byrde.",
+        "”Det passer ikke helt til vores processer.” Det hører man ofte om globale CRM’er.\n\n- Nordisk B2B har specifikke arbejdsgange og forventninger.\n- Lokal support der forstår din kontekst er ikke nice-to-have.\n\nTakeaway: Fit trumfer features. Vælg et CRM bygget til din virkelighed."
+      ]
+    }
   ]
 }
