@@ -206,273 +206,6 @@
 </div>
 
 <script>
-const POSTS = {
-  "https://www.superoffice.com/blog/crm-and-erp-integration-why-your-numbers-dont-add-up/": [
-`Dine CRM- og ERP-tal stemmer ikke overens. Det er ikke et IT-problem.
-
-Det er et dataproblem — og det koster dig troværdighed i ledelsesrummet.
-
-- Sælgerne taster i CRM. Økonomi taster det samme i ERP. Fejl opstår i mellemrummet.
-- Prognoser bygget på CRM-data alene mangler historisk kontekst.
-- Integration er ikke et stort projekt. Det er én beslutning.
-
-Takeaway: Ét sandhedspunkt er ikke luksus. Det er forudsætningen for at styre.`,
-`To systemer. Dobbelt datainput. Én sandhed — ingen af dem rigtige.
-
-Når CRM og ERP ikke er integrerede:
-- Salgschefen ser én pipeline. CFO'en ser noget andet.
-- Manuelle overførsler = fejl. Garanteret.
-- Ingen kan stole på tallene til et ledelsesmøde.
-
-Takeaway: Integration er ikke IT. Det er troværdighed.`,
-`"Vores tal stemmer ikke overens."
-
-Den sætning opstår, når CRM og ERP taler to forskellige sprog.
-- CRM tracker relationer og pipeline.
-- ERP tracker ordrer og faktura.
-- Ingen integration = to versioner af virkeligheden.
-
-Takeaway: Integrér systemerne. Eller fortsæt med at forklare uoverensstemmelserne.`
-],
-  "https://www.superoffice.com/blog/50-crm-statistics/": [
-`Kun 34% af en sælgers tid bruges på at sælge.
-
-Resten forsvinder i administration, møder og jagten på information.
-
-- 61% af de bedst præsterende salgsledere automatiserer via CRM. Mod 46% hos de svage.
-- 65% af sælgere med mobil CRM-adgang rammer kvoten. Uden: 22%.
-- 40% af AI-CRM-projekter fejler inden 2028 — fordi datagrundlaget ikke er i orden.
-
-Takeaway: Din CRM-investering er kun så god som din datakvalitet og adoption.`,
-`65% af sælgere med mobil CRM-adgang rammer deres kvote. Uden: 22%.
-
-Det er ikke en tilfældighed.
-- De bedste salgsteams bruger CRM aktivt — ikke for at rapportere, men for at sælge.
-- Adoption er alt. Et CRM ingen bruger er et dyrt telefonkatalog.
-
-Takeaway: CRM-ROI handler ikke om features. Det handler om brug.`,
-`40% af AI-CRM-projekter fejler inden 2028. Ikke pga. AI'en — pga. datagrundlaget.
-
-- Ringe data + kraftfuld AI = hurtige, forkerte beslutninger.
-- Teknologi er det nemme. Ændring af adfærd er det svære.
-
-Takeaway: Investér i datakvalitet før AI. Rækkefølgen betyder noget.`
-],
-  "https://www.superoffice.com/blog/quality-data-and-ai-strategy/": [
-`AI virker kun, hvis din data gør. Det lyder indlysende. Men 60% fejler netop her.
-
-- Garbage in, garbage out — gælder dobbelt for AI.
-- CRM-data er din vigtigste AI-kilde: kontakthistorik, pipeline, kundeadfærd.
-- Rens data én gang. Byg processer der holder den ren.
-
-Takeaway: Din AI-strategi starter i CRM, ikke i modellen.`,
-`De fleste AI-strategier fejler — ikke i implementeringen, men i grundlaget.
-
-- CRM-data er din mest værdifulde AI-kilde.
-- Men de fleste CRM-databaser er 30-50% ufuldstændige.
-- Du kan ikke bygge intelligens på et fundament af gæt.
-
-Takeaway: Rens din CRM-data. Det er din AI-strategi, trin 1.`,
-`AI er ikke magisk. Den er matematisk. Og matematik kræver korrekte input.
-
-- 60% af AI-projekter fejler pga. datakvalitet, ikke algoritmen.
-- Datakvalitet er ikke IT's ansvar. Det er salgslederens.
-
-Takeaway: Din AI-ambition starter med en CRM-oprydning.`
-],
-  "https://www.superoffice.com/blog/superoffice-1-crm-in-the-nordics/": [
-`G2 har talt. SuperOffice er #1 CRM i Norden.
-
-Ikke selvudnævnt. Baseret på vurderinger fra brugerne selv.
-- Højeste score på ease of use og support i kategorien.
-- GDPR-compliant by design — ikke som en eftertanke.
-
-Takeaway: Det er ikke en titel. Det er tillid fra nordiske B2B-virksomheder.`,
-`Brugerne har talt. SuperOffice er #1 CRM i Norden på G2.
-
-- Bedst på ease of use og support i kategorien.
-- Bygget til nordiske forretningsprocesser — ikke tilpasset fra en US-løsning.
-
-Takeaway: De bedste anbefalinger kommer fra dem, der bruger det dagligt.`,
-`Hvad gør et CRM til det bedste i Norden? Ikke features. Fit.
-
-- GDPR-compliance by design.
-- Lokal support der forstår din forretningskontekst.
-- Arbejdsgang der matcher nordisk B2B.
-
-Takeaway: G2 rangerer SuperOffice #1 i Norden. Kunderne forklarer hvorfor.`
-],
-  "https://www.superoffice.com/blog/customer-complaints-good-for-business/": [
-`Kundeklager er ikke problemer. De er gratis produktudvikling.
-
-96% af utilfredse kunder klager ikke — de forsvinder bare.
-- En klage er en chance for retention, hvis du handler hurtigt.
-- CRM logger klagen, tildeler den og sikrer follow-up.
-
-Takeaway: Tak dine klagende kunder. De er dem, der stadig tror på dig.`,
-`De fleste virksomheder frygter kundeklager. De bedste søger dem.
-
-- En klage er et signal: kunden er stadig engageret.
-- Klager håndteret inden for 24 timer øger loyalitet med op til 70%.
-
-Takeaway: Klag-håndtering er retention-strategi. Behandl det som sådan.`,
-`Din mest loyale kunde i morgen er din klagende kunde i dag — hvis du håndterer det rigtigt.
-
-- 70% af kunder der klager og får en god løsning, køber igen.
-- 96% klager aldrig. Ingen chance for at redde forholdet.
-
-Takeaway: Byg et system til at modtage klager. Det er retention-infrastruktur.`
-],
-  "https://www.superoffice.com/blog/response-times/": [
-`Kunderne venter. Konkurrenterne gør det ikke.
-
-90% forventer svar inden for 10 minutter. De fleste virksomheder bruger timer.
-- Automatiseret routing sender sagen til den rigtige person første gang.
-- Fælles CRM-indbakke eliminerer "hvem tager den?"-problemet.
-
-Takeaway: Response-tid er et salgsargument. Ikke bare et support-KPI.`,
-`10 minutter. Det er hvad 90% af kunderne forventer som maksimal svartid.
-
-De fleste support-teams bruger timer. Eller dage.
-- Automatiseret routing sikrer rigtig person fra start.
-- Hurtigere respons = højere NPS = lavere churn.
-
-Takeaway: Svartid er ikke et support-KPI. Det er et forretningsparameter.`,
-`Kunden venter. Konkurrenten svarer. Det er den simple sandhed bag churn.
-
-- Virksomheder der svarer inden 1 time har 7x højere chance for at kvalificere leads.
-- CRM + automatisering = konsistent responstid uanset hvem der er på vagt.
-
-Takeaway: Byg processer der svarer hurtigt. Ikke kulturer der lover det.`
-],
-  "https://www.superoffice.com/blog/customizable-sales-dashboards/": [
-`Hvad du ikke måler, styrer du ikke.
-
-De fleste salgsteams har et dashboard. Færre bruger det aktivt. Forskellen er relevans.
-- Brugerdefinerede views: salgsleder og konsulent ser det der er relevant for dem.
-- Forecasting baseret på aktivitet, ikke mavefornemmelse.
-
-Takeaway: Et dashboard er ikke rapportering. Det er beslutningstagen.`,
-`"Hvad er status på pipeline?" Det burde aldrig være et spørgsmål. Det burde være synligt.
-
-- Real-time data i stedet for manuelle rapporter.
-- Skræddersyede dashboards i CRM: alle ser det der er relevant for dem.
-
-Takeaway: Et godt dashboard gør salgsmødet overflødigt som statusmøde.`,
-`Forecast eller gæt? De fleste pipelines er det sidste, selvom vi kalder det det første.
-
-- 79% af salgsledere er ikke tilfredse med nøjagtigheden af deres forecast.
-- Årsagen: data der ikke er opdateret eller struktureret.
-
-Takeaway: Du kan ikke forbedre det du ikke måler præcist.`
-],
-  "https://www.superoffice.com/blog/sales-pipeline-management-tips/": [
-`De fleste pipelines er en ønskeliste. Ikke en plan.
-
-79% af leads konverterer aldrig — primært pga. manglende follow-up.
-- Struktureret pipeline øger win-rate med 28%.
-- CRM giver overblik over hvad der hænger fast — og hvorfor.
-
-Takeaway: En pipeline er en proces. Ikke et regneark.`,
-`79% af leads konverterer aldrig. Ikke fordi produktet er forkert. Men fordi follow-up mangler.
-
-- De salgsteams der strukturerer pipeline vinder mere. Konsekvent.
-- 12 konkrete strategier til at bygge en pipeline der konverterer.
-
-Takeaway: Pipeline er ikke et pipeline-problem. Det er et disciplin-problem.`,
-`En stærk pipeline har tre ting: volumen, velocity og synlighed. De fleste fokuserer kun på volumen.
-
-- Velocity: hvor hurtigt bevæger deals sig?
-- Synlighed: hvem ejer hvad, og hvad er næste trin?
-
-Takeaway: 12 strategier der gør pipeline til en plan, ikke en ønskeliste.`
-],
-  "https://www.superoffice.com/blog/how-events-accelerate-the-customer-journey/": [
-`Events er ikke markedsføring. De er en accelerator.
-
-Personlig kontakt forkorter salgscyklussen mere end noget andet kanal.
-- Events skaber pipeline-progression der ellers ville tage måneder.
-- CRM tracker hvem der deltog og hvad næste skridt er.
-
-Takeaway: Brug events strategisk. Mål effekten — i CRM.`,
-`Hvad er den hurtigste vej fra "interesseret" til "klar til at købe"? Personlig kontakt.
-
-- Events forkorter salgscyklussen markant.
-- Men kun hvis du tracker hvem der deltog og hvad der blev sagt.
-
-Takeaway: Events uden CRM-tracking er markedsføring. Med CRM-tracking er det pipeline.`,
-`De bedste events skaber ikke leads. De accelererer dem. Der er forskel.
-
-- En lead du møder på event er 5x nemmere at booke møde med efterfølgende.
-- Momentum er kortvarigt — du har 48 timer til at følge op.
-
-Takeaway: Mål dine events i pipeline-progression, ikke i visitkort.`
-],
-  "https://www.superoffice.com/blog/supernotes-and-ethical-ai-in-crm/": [
-`AI i CRM rejser et spørgsmål ingen taler nok om: Hvem ejer mødereferaterne?
-
-SuperNotes holder mødedata i dit CRM. Ikke i en US-sky.
-- GDPR-compliant by design.
-- Dine kundesamtaler er dine — ikke træningsdata for et andet produkt.
-
-Takeaway: Vælg AI-løsninger du kontrollerer. Ikke dem der kontrollerer dig.`,
-`Dine møder med kunder er fortrolige. Er dine mødereferater det?
-
-- SuperNotes holder data i dit CRM — din infrastruktur, dine regler.
-- GDPR-compliant. Ingen data til tredjepart.
-
-Takeaway: Vælg AI du kan stå inde for — overfor dine kunder og lovgivningen.`,
-`"Vi bruger AI til mødereferater." — Hvem gemmer dem, og hvor?
-
-- US-baserede AI: stærk teknologi, svag datasuverænitet.
-- SuperNotes: AI-noter der forbliver i dit CRM og din jurisdiktion.
-
-Takeaway: Det du deler i et møde, bør kontrolleres af dig.`
-],
-  "https://www.superoffice.com/blog/customer-data-silos/": [
-`Dine sælgere bruger 23% af deres tid på at lede efter kundeinfo. Det er to timer om dagen. Spildt.
-
-- Data spredt over mail, Excel og Teams.
-- Ny sælger på en konto? Fra nul. Igen.
-
-Takeaway: Din vigtigste salgsressource er tid. Spild den ikke på datasøgning.`,
-`Ny sælger overtager en konto. Ingen noter. Ingen historik. Fra nul.
-
-Det er prisen for scattered customer data.
-- 23% af sælgernes tid går til at finde information der allerede eksisterer.
-
-Takeaway: Kundehistorik er forretningskapital. Opbevar den derefter.`,
-`Tre steder din kundeinfo bor: Mail. Excel. "Jeg tror Lars har det."
-
-- Gennemsnitlig sælger bruger 23% af arbejdstiden på at finde information.
-- Onboarding tager 3x så lang tid uden centraliseret data.
-
-Takeaway: Stop med at gemme kundeinfo i hoveder og indbakker.`
-],
-  "https://www.superoffice.com/blog/best-crm-for-european-businesses/": [
-`Europæiske virksomheder har specifikke krav. De fleste CRM'er er ikke bygget til dem.
-
-GDPR, datasuverænitet, lokal support — det er ikke nice-to-have. Det er krav.
-- US-CRM: stærk teknologi, svag compliance-profil.
-- Europæisk CRM: bygget til den regulatoriske virkelighed du opererer i.
-
-Takeaway: Vælg et CRM der forstår, at du opererer under europæisk lovgivning.`,
-`GDPR er ikke en ulempe. Det er et salgsargument.
-
-- US-CRM: compliance som eftertanke.
-- Europæisk CRM: compliance by design.
-- Datasuverænitet: kunden ejer data, du kontrollerer opbevaring.
-
-Takeaway: Gør din compliance til en styrke, ikke en byrde.`,
-`"Det passer ikke helt til vores processer." Det hører man ofte om globale CRM'er.
-
-- Nordisk B2B har specifikke arbejdsgange og forventninger.
-- Lokal support der forstår din kontekst er ikke nice-to-have.
-
-Takeaway: Fit trumfer features. Vælg et CRM bygget til din virkelighed.`
-]
-};
-
 
 function parseDate(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
 function fmtDate(s){return parseDate(s).toLocaleDateString('da-DK',{day:'numeric',month:'short',year:'numeric'});}
@@ -523,10 +256,12 @@ fetch('data.json?v='+Date.now())
     const tbody=document.getElementById('article-tbody');
     tbody.innerHTML='';
     articles.forEach(a=>{
+      articlesByUrl[a.url]=a.posts||[];
       const isNew=parseDate(a.date)>cutoff;
       if(isNew)newCount++;
+      const hasPosts=a.posts&&a.posts.length>0;
       const tr=document.createElement('tr');
-      tr.innerHTML=`<td><a class="article-link" href="${a.url}" target="_blank" rel="noopener">${a.title}</a></td><td class="date-val">${fmtDate(a.date)}</td><td class="c">${isNew?'<span class="badge-ny">NY</span>':'<span class="dash">–</span>'}</td><td class="r"><button class="btn btn-coral btn-lav" data-title="${a.title.replace(/"/g,'&quot;')}" data-url="${a.url}">Lav opslag →</button></td>`;
+      tr.innerHTML=`<td><a class="article-link" href="${a.url}" target="_blank" rel="noopener">${a.title}</a></td><td class="date-val">${fmtDate(a.date)}</td><td class="c">${isNew?'<span class="badge-ny">NY</span>':'<span class="dash">–</span>'}</td><td class="r"><button class="btn btn-coral btn-lav" data-title="${a.title.replace(/"/g,'&quot;')}" data-url="${a.url}"${!hasPosts?' title="Opslag genereres ved næste kørsel"':''}>Lav opslag →</button></td>`;
       tbody.appendChild(tr);
     });
     const badge=document.getElementById('new-badge');
@@ -547,29 +282,30 @@ const charCount=document.getElementById('char-count');
 const versionIndicator=document.getElementById('version-indicator');
 const commentUrlEl=document.getElementById('comment-url');
 const copyConfirmLink=document.getElementById('copy-confirm-link');
-let currentUrl='',currentVersionIdx=0;
+let currentUrl='',currentVersionIdx=0,currentPosts=[];
+let articlesByUrl={};
 
 function updatePost(){
-  const v=POSTS[currentUrl]||['Opslag ikke tilgængeligt.'];
-  const base=v[currentVersionIdx];
+  const v=currentPosts.length?currentPosts:['Opslag genereres ved næste kørsel.'];
+  const base=v[currentVersionIdx]||v[0];
   const p=base+'\n\n👇 Læs mere i kommentaren';
   postBox.textContent=p;
   const l=p.length;
   charCount.textContent=l+' tegn';
   charCount.className='char-count'+(l>3000?' over':'');
-  versionIndicator.textContent='Version '+(currentVersionIdx+1)+' af '+v.length;
+  versionIndicator.textContent=currentPosts.length?'Version '+(currentVersionIdx+1)+' af '+currentPosts.length:'';
   commentUrlEl.textContent=currentUrl;
   copyConfirm.classList.remove('show');
   copyConfirmLink.classList.remove('show');
 }
-function openDrawer(title,url){currentUrl=url;currentVersionIdx=0;drawerTitle.textContent=title;updatePost();overlay.classList.add('open');}
+function openDrawer(title,url){currentUrl=url;currentVersionIdx=0;currentPosts=articlesByUrl[url]||[];drawerTitle.textContent=title;updatePost();overlay.classList.add('open');}
 
 document.addEventListener('click',e=>{const btn=e.target.closest('.btn-lav');if(btn)openDrawer(btn.dataset.title,btn.dataset.url);});
 document.getElementById('btn-close').addEventListener('click',()=>overlay.classList.remove('open'));
 overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open');});
 document.getElementById('btn-copy').addEventListener('click',()=>{navigator.clipboard.writeText(postBox.textContent).then(()=>{copyConfirm.classList.add('show');setTimeout(()=>copyConfirm.classList.remove('show'),2000);});});
 document.getElementById('btn-copy-link').addEventListener('click',()=>{navigator.clipboard.writeText(currentUrl).then(()=>{copyConfirmLink.classList.add('show');setTimeout(()=>copyConfirmLink.classList.remove('show'),2000);});});
-document.getElementById('btn-regen').addEventListener('click',()=>{const v=POSTS[currentUrl]||[''];currentVersionIdx=(currentVersionIdx+1)%v.length;updatePost();});
+document.getElementById('btn-regen').addEventListener('click',()=>{if(currentPosts.length>1){currentVersionIdx=(currentVersionIdx+1)%currentPosts.length;updatePost();}});
 </script>
 </body>
 </html>
