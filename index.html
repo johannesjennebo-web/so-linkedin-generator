@@ -87,6 +87,13 @@
   .version-indicator { font-size: 12px; color: var(--muted); margin-left: 8px; }
   .char-count { font-size: 12px; color: var(--muted); }
   .char-count.over { color: #c0432a; font-weight: 600; }
+  .comment-section { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .comment-label { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); white-space: nowrap; }
+  .comment-url { font-size: 13px; color: var(--green-mid); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .btn-copy-link { background: none; border: 1px solid var(--border); border-radius: 6px; font-family: var(--font); font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; padding: 5px 12px; white-space: nowrap; transition: border-color .15s, color .15s; }
+  .btn-copy-link:hover { border-color: var(--green-mid); color: var(--green); }
+  .copy-confirm-link { font-size: 12px; color: var(--green-light); font-weight: 600; opacity: 0; transition: opacity .2s; }
+  .copy-confirm-link.show { opacity: 1; }
 
   .loading { padding: 48px 20px; text-align: center; color: var(--muted); font-size: 14px; }
   .fetched-note { font-size: 11px; color: var(--muted); margin-left: 8px; font-variant-numeric: tabular-nums; }
@@ -187,6 +194,12 @@
         <span class="version-indicator" id="version-indicator"></span>
       </div>
       <span class="char-count" id="char-count"></span>
+    </div>
+    <div class="comment-section">
+      <span class="comment-label">Kommentar →</span>
+      <span class="comment-url" id="comment-url"></span>
+      <button class="btn-copy-link" id="btn-copy-link">Kopiér link</button>
+      <span class="copy-confirm-link" id="copy-confirm-link">Kopieret!</span>
     </div>
   </div>
   <button class="btn-ghost-sm" id="btn-close" style="position:absolute;top:16px;right:24px;color:rgba(255,255,255,.7)">Luk ×</button>
@@ -524,15 +537,30 @@ const postBox=document.getElementById('post-box');
 const copyConfirm=document.getElementById('copy-confirm');
 const charCount=document.getElementById('char-count');
 const versionIndicator=document.getElementById('version-indicator');
+const commentUrlEl=document.getElementById('comment-url');
+const copyConfirmLink=document.getElementById('copy-confirm-link');
 let currentUrl='',currentVersionIdx=0;
 
-function updatePost(){const v=POSTS[currentUrl]||['Opslag ikke tilgængeligt.'];const p=v[currentVersionIdx];postBox.textContent=p;const l=p.length;charCount.textContent=l+' tegn';charCount.className='char-count'+(l>3000?' over':'');versionIndicator.textContent='Version '+(currentVersionIdx+1)+' af '+v.length;copyConfirm.classList.remove('show');}
+function updatePost(){
+  const v=POSTS[currentUrl]||['Opslag ikke tilgængeligt.'];
+  const base=v[currentVersionIdx];
+  const p=base+'\n\n👇 Læs mere i kommentaren';
+  postBox.textContent=p;
+  const l=p.length;
+  charCount.textContent=l+' tegn';
+  charCount.className='char-count'+(l>3000?' over':'');
+  versionIndicator.textContent='Version '+(currentVersionIdx+1)+' af '+v.length;
+  commentUrlEl.textContent=currentUrl;
+  copyConfirm.classList.remove('show');
+  copyConfirmLink.classList.remove('show');
+}
 function openDrawer(title,url){currentUrl=url;currentVersionIdx=0;drawerTitle.textContent=title;updatePost();overlay.classList.add('open');}
 
 document.addEventListener('click',e=>{const btn=e.target.closest('.btn-lav');if(btn)openDrawer(btn.dataset.title,btn.dataset.url);});
 document.getElementById('btn-close').addEventListener('click',()=>overlay.classList.remove('open'));
 overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open');});
 document.getElementById('btn-copy').addEventListener('click',()=>{navigator.clipboard.writeText(postBox.textContent).then(()=>{copyConfirm.classList.add('show');setTimeout(()=>copyConfirm.classList.remove('show'),2000);});});
+document.getElementById('btn-copy-link').addEventListener('click',()=>{navigator.clipboard.writeText(currentUrl).then(()=>{copyConfirmLink.classList.add('show');setTimeout(()=>copyConfirmLink.classList.remove('show'),2000);});});
 document.getElementById('btn-regen').addEventListener('click',()=>{const v=POSTS[currentUrl]||[''];currentVersionIdx=(currentVersionIdx+1)%v.length;updatePost();});
 </script>
 </body>
