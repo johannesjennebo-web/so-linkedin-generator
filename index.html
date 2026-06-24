@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SuperOffice LinkedIn Generator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #06423e; --green-dark: #002420; --green-mid: #3b7e79; --green-light: #31b494;
+    --dune: #f2efea; --coral: #f48a6d; --coral-hover: #e6754e;
+    --surface: #fff; --text: #1c1c1e; --muted: #5e706e; --border: #dde5e3; --row-hover: #f7f9f8;
+    --font: 'Optima','Candara',system-ui,-apple-system,sans-serif;
+  }
+  body { font-family: var(--font); background: var(--dune); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.5; }
+
+  .header { background: var(--green); padding: 0 28px; position: sticky; top: 0; z-index: 20; }
+  .header-top { display: flex; align-items: center; justify-content: space-between; height: 62px; border-bottom: 1px solid rgba(255,255,255,.1); }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .so-logo { height: 22px; display: block; flex-shrink: 0; }
+  .brand-sep { width: 1px; height: 22px; background: rgba(255,255,255,.2); flex-shrink: 0; }
+  .li-lockup { display: flex; align-items: center; gap: 7px; }
+  .li-icon { width: 22px; height: 22px; border-radius: 4px; background: #0A66C2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .li-label { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -.01em; }
+  .header-meta { font-size: 12px; color: rgba(242,239,234,.45); font-variant-numeric: tabular-nums; }
+
+  .tabs { display: flex; }
+  .tab-btn { background: none; border: none; padding: 12px 18px; font-size: 13.5px; font-family: var(--font); font-weight: 500; color: rgba(242,239,234,.5); cursor: pointer; border-bottom: 2px solid transparent; transition: color .15s, border-color .15s; }
+  .tab-btn:hover { color: rgba(242,239,234,.8); }
+  .tab-btn.active { color: #fff; border-bottom-color: var(--coral); }
+
+  .main { max-width: 900px; margin: 0 auto; padding: 28px 24px 72px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .status-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  .pill { font-size: 12px; font-weight: 600; padding: 3px 11px; border-radius: 20px; }
+  .pill-coral { background: #fde8e1; color: #c0432a; }
+  .pill-muted { background: #eceae6; color: var(--muted); }
+  .pill-green { background: #d1ede9; color: #0a3e3a; }
+
+  .card { background: var(--surface); border-radius: 10px; border: 1px solid var(--border); overflow: hidden; }
+  .card-banner { padding: 9px 20px; background: #f7f9f8; border-bottom: 1px solid var(--border); font-size: 12.5px; color: var(--muted); }
+  .card-banner strong { color: var(--text); }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { text-align: left; padding: 10px 20px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); border-bottom: 1px solid var(--border); background: #fafaf9; }
+  th.r, td.r { text-align: right; }
+  th.c, td.c { text-align: center; }
+  tbody tr { border-bottom: 1px solid #f0ede8; transition: background .1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--row-hover); }
+  tbody td { padding: 12px 20px; vertical-align: middle; }
+  .article-link { font-size: 14px; font-weight: 500; color: var(--text); text-decoration: none; line-height: 1.4; }
+  .article-link:hover { color: var(--green); }
+  .date-val { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .badge-ny { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 20px; background: #fde8e1; color: #c0432a; letter-spacing: .04em; }
+  .dash { color: #ccc; font-size: 16px; }
+
+  .btn { display: inline-flex; align-items: center; gap: 5px; border: none; border-radius: 6px; font-family: var(--font); font-weight: 600; cursor: pointer; transition: background .15s; white-space: nowrap; }
+  .btn-coral { background: var(--coral); color: #fff; padding: 6px 14px; font-size: 12.5px; }
+  .btn-coral:hover { background: var(--coral-hover); }
+  .btn-green { background: var(--green); color: #fff; padding: 9px 20px; font-size: 13.5px; }
+  .btn-green:hover { background: var(--green-dark); }
+  .btn-ghost-sm { background: none; border: none; font-family: var(--font); font-size: 13px; color: var(--muted); cursor: pointer; padding: 4px 0; }
+  .btn-ghost-sm:hover { color: var(--text); }
+  .btn-regen { background: none; border: 1px solid var(--border); border-radius: 6px; font-family: var(--font); font-size: 12.5px; font-weight: 600; color: var(--muted); cursor: pointer; padding: 6px 14px; transition: border-color .15s, color .15s; }
+  .btn-regen:hover { border-color: var(--green-mid); color: var(--green); }
+
+  .run-status { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot-done { background: #31b494; } .dot-planned { background: #b2c7eb; } .dot-skipped { background: #d0ccc6; }
+  .chosen-article { font-size: 13px; color: var(--text); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .no-chosen { font-size: 13px; color: #ccc; }
+  .next-run td { background: #f0f6f5; }
+
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(2,18,16,.5); z-index: 30; align-items: flex-end; justify-content: center; }
+  .overlay.open { display: flex; }
+  .drawer { background: var(--surface); border-radius: 14px 14px 0 0; padding: 28px 32px 44px; width: 100%; max-width: 900px; box-shadow: 0 -12px 48px rgba(0,0,0,.15); }
+  .drawer-eyebrow { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--coral); margin-bottom: 4px; }
+  .drawer-article-title { font-size: 15px; font-weight: 600; color: var(--green); line-height: 1.35; max-width: 680px; margin-bottom: 18px; }
+  .post-box { background: #f7f9f8; border: 1px solid var(--border); border-left: 3px solid var(--green-mid); border-radius: 8px; padding: 18px 20px; font-size: 14px; line-height: 1.65; color: var(--text); white-space: pre-wrap; margin-bottom: 18px; min-height: 120px; }
+  .drawer-footer { display: flex; align-items: center; justify-content: space-between; }
+  .copy-confirm { font-size: 12.5px; color: var(--green-light); font-weight: 600; margin-left: 12px; opacity: 0; transition: opacity .2s; }
+  .copy-confirm.show { opacity: 1; }
+  .version-indicator { font-size: 12px; color: var(--muted); margin-left: 8px; }
+  .char-count { font-size: 12px; color: var(--muted); }
+  .char-count.over { color: #c0432a; font-weight: 600; }
+
+  .loading { padding: 48px 20px; text-align: center; color: var(--muted); font-size: 14px; }
+  .fetched-note { font-size: 11px; color: var(--muted); margin-left: 8px; font-variant-numeric: tabular-nums; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-top">
+    <div class="brand">
+      <svg class="so-logo" viewBox="0 0 440 499" xmlns="http://www.w3.org/2000/svg" aria-label="SuperOffice">
+        <path fill="#f2efea" d="M230.09,167.4s25.2-117.22-80.79-142.54C101.12,13.36,105.16,37.01,0,.45,0,.45,29.46,65.73,81.61,77.23c10.33,2.28,21.72,2.56,33.37,2.57h.45c1.78,0,3.55,0,5.33-.01,1.81-.01,3.6-.02,5.41-.02h.47c2.26,0,4.52,0,6.78.04.17,0,.32,0,.48,0,4.59.08,9.16.25,13.65.63.14.01.28.02.41.03,2.24.19,4.46.44,6.65.74,0,0,.03,0,.06.01v.08c.19,0,.39.01.58,0,9.8,1.43,19.07,4.18,27.31,9.35,16.91,13,27.75,38.13,26.52,66.51-.58,13.35-3.77,25.73-8.84,36.31.67-4.15,1.03-8.42,1.03-12.76,0-15.85-4.61-30.82-12.97-42.17-8.82-11.95-20.72-18.53-33.52-18.53s-24.72,6.58-33.53,18.53c-8.36,11.35-12.97,26.33-12.97,42.17,0,6.45.77,12.74,2.24,18.72-7.12-13-11.01-29.39-10.25-47.02,1.32-30.27,16.01-55.67,35.87-66.08-3.17-.08-6.35-.13-9.57-.13-1.91,0-3.82,0-5.72.02-1.91,0-3.82.01-5.73.01-6.49,0-13.59-.08-20.67-.68-11.88,16.49-19.53,37.86-20.61,61.46-2.48,54.32,30.81,99.82,74.34,101.64,39.76,1.66,74.32-33.71,81.89-81.25l.02-.02ZM194.07,184.78c-.46,10.54-3.15,20.27-7.4,28.38-9.84,9.98-22.11,15.7-35.19,15.12-10.76-.47-20.61-5.15-28.74-12.81-5.14-9.44-7.96-21.33-7.4-34.14.71-16.23,6.7-30.54,15.56-39.96,8.44,8.54,18.32,18.12,18.4,16.26.08-1.71-1.46-14.62-2.94-26.45,3.43-1.13,7-1.67,10.68-1.51,21.74.95,38.32,25.62,37.03,55.1"/>
+        <path fill="#f2efea" d="M288.69,204.54c-5.2-8.89-13.54-19.09-22.37-28.18-8.71-8.97-17.9-16.86-25.02-21.35-3.45,34.21-18.27,63.71-39.14,82.13,3.58,5.84,10.95,17.78,17.3,27.18,14.78,21.85,40.94,56.56,40.94,56.56,27.69-31.4,41.83-86.73,31.37-110.4-.83-1.88-1.88-3.88-3.07-5.93"/>
+        <path fill="#f2efea" d="M311.94,80.43c2.3-.46,4.71-.79,7.26-.95.99-.06,1.95-.11,2.89-.14,16.77-.67,24.51,2.39,36.26.07,6.32-1.24,13.82-4.03,24.51-9.8,31.67-17.09,42.72-57.63,42.72-57.63,0,0-28.81,13.89-50.48,16.79-28.99,3.89-54.7-5.16-89.72,18.7-37.03,25.24-35.08,95.75-34.68,104.66,3.17,2.35,6.55,5.12,10.01,8.19,15.22,13.52,31.86,32.79,38.15,47.03.53,1.2,1,2.47,1.43,3.78,1.34,4.18,2.15,8.91,2.47,14.05,5.37,1.65,10.98,2.51,16.74,2.44,37.21-.48,66.78-38.89,66.04-85.8-.35-22.49-7.61-42.83-19.17-57.88-1.16.38-2.27.68-3.37.98-5.22,1.37-9.67,1.82-13.98,1.82-3.07,0-6.05-.22-9.17-.45,14.43,10.56,24.16,32.2,23.81,57.11-.19,13.66-3.39,26.27-8.66,36.58.92-3.69,1.52-7.53,1.81-11.5.13-1.72.22-3.47.22-5.24,0-30.85-19.81-55.94-44.15-55.94-15.02,0-28.3,9.57-36.28,24.14,1.86-16.33,8.19-30.54,17.11-40.01,5.35-5.46,11.55-9.31,18.24-11.01M287.13,131.83c6.49,6.64,15.54,15.59,15.61,14.07.07-1.54-1.67-15.6-2.9-25.22,4.97-2.69,10.38-4.03,15.98-3.66,20.52,1.36,35.66,25.01,33.82,52.84-.42,6.27-1.68,12.21-3.58,17.63-7.62,9.08-17.41,14.53-28.03,14.44-20.33-.18-37.06-20.6-41.09-47.82,1.99-8.57,5.53-16.22,10.18-22.3"/>
+      </svg>
+      <div class="brand-sep"></div>
+      <div class="li-lockup">
+        <div class="li-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 23.2 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </div>
+        <span class="li-label">LinkedIn Generator</span>
+      </div>
+    </div>
+    <div class="header-meta" id="header-meta"></div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" role="tab" data-tab="artikler">Artikler</button>
+    <button class="tab-btn" role="tab" data-tab="historik">Historik</button>
+    <button class="tab-btn" role="tab" data-tab="planlagt">Planlagt</button>
+  </nav>
+</header>
+
+<main class="main">
+  <div class="tab-panel active" id="tab-artikler">
+    <div class="status-bar">
+      <span class="section-label">Seneste artikler · superoffice.com/blog</span>
+      <span class="pill" id="new-badge">–</span>
+    </div>
+    <div class="card">
+      <div class="card-banner" id="cutoff-banner">Indlæser artikler…</div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr>
+            <th>Artikel</th>
+            <th style="width:115px">Publiceret</th>
+            <th class="c" style="width:60px">Ny</th>
+            <th class="r" style="width:130px"></th>
+          </tr></thead>
+          <tbody id="article-tbody"><tr><td colspan="4" class="loading">Henter artikler fra superoffice.com/blog…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-historik">
+    <div class="status-bar">
+      <span class="section-label">Kørselshistorik</span>
+      <span class="pill pill-muted">Demo-data</span>
+    </div>
+    <div class="card">
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Dato</th><th>Dag</th><th>Artikler</th><th>Valgt artikel</th><th class="c">Opslag</th></tr></thead>
+          <tbody id="history-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-planlagt">
+    <div class="status-bar">
+      <span class="section-label">Kommende kørsler</span>
+      <span class="pill pill-green">Man &amp; tor · kl. 08:00</span>
+    </div>
+    <div class="card">
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Dato</th><th>Dag</th><th>Klokkeslæt</th><th class="c">Status</th></tr></thead>
+          <tbody id="scheduled-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="drawer">
+    <div class="drawer-eyebrow">LinkedIn-opslag klar</div>
+    <div class="drawer-article-title" id="drawer-title"></div>
+    <div class="post-box" id="post-box"></div>
+    <div class="drawer-footer">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="btn btn-green" id="btn-copy">Kopiér opslag</button>
+        <span class="copy-confirm" id="copy-confirm">Kopieret!</span>
+        <button class="btn-regen" id="btn-regen">↻ Ny version</button>
+        <span class="version-indicator" id="version-indicator"></span>
+      </div>
+      <span class="char-count" id="char-count"></span>
+    </div>
+  </div>
+  <button class="btn-ghost-sm" id="btn-close" style="position:absolute;top:16px;right:24px;color:rgba(255,255,255,.7)">Luk ×</button>
+</div>
+
+<script>
+const POSTS = {
+  "https://www.superoffice.com/blog/crm-and-erp-integration-why-your-numbers-dont-add-up/": [
+`Dine CRM- og ERP-tal stemmer ikke overens. Det er ikke et IT-problem.
+
+Det er et dataproblem — og det koster dig troværdighed i ledelsesrummet.
+
+- Sælgerne taster i CRM. Økonomi taster det samme i ERP. Fejl opstår i mellemrummet.
+- Prognoser bygget på CRM-data alene mangler historisk kontekst.
+- Integration er ikke et stort projekt. Det er én beslutning.
+
+Takeaway: Ét sandhedspunkt er ikke luksus. Det er forudsætningen for at styre.`,
+`To systemer. Dobbelt datainput. Én sandhed — ingen af dem rigtige.
+
+Når CRM og ERP ikke er integrerede:
+- Salgschefen ser én pipeline. CFO'en ser noget andet.
+- Manuelle overførsler = fejl. Garanteret.
+- Ingen kan stole på tallene til et ledelsesmøde.
+
+Takeaway: Integration er ikke IT. Det er troværdighed.`,
+`"Vores tal stemmer ikke overens."
+
+Den sætning opstår, når CRM og ERP taler to forskellige sprog.
+- CRM tracker relationer og pipeline.
+- ERP tracker ordrer og faktura.
+- Ingen integration = to versioner af virkeligheden.
+
+Takeaway: Integrér systemerne. Eller fortsæt med at forklare uoverensstemmelserne.`
+],
+  "https://www.superoffice.com/blog/50-crm-statistics/": [
+`Kun 34% af en sælgers tid bruges på at sælge.
+
+Resten forsvinder i administration, møder og jagten på information.
+
+- 61% af de bedst præsterende salgsledere automatiserer via CRM. Mod 46% hos de svage.
+- 65% af sælgere med mobil CRM-adgang rammer kvoten. Uden: 22%.
+- 40% af AI-CRM-projekter fejler inden 2028 — fordi datagrundlaget ikke er i orden.
+
+Takeaway: Din CRM-investering er kun så god som din datakvalitet og adoption.`,
+`65% af sælgere med mobil CRM-adgang rammer deres kvote. Uden: 22%.
+
+Det er ikke en tilfældighed.
+- De bedste salgsteams bruger CRM aktivt — ikke for at rapportere, men for at sælge.
+- Adoption er alt. Et CRM ingen bruger er et dyrt telefonkatalog.
+
+Takeaway: CRM-ROI handler ikke om features. Det handler om brug.`,
+`40% af AI-CRM-projekter fejler inden 2028. Ikke pga. AI'en — pga. datagrundlaget.
+
+- Ringe data + kraftfuld AI = hurtige, forkerte beslutninger.
+- Teknologi er det nemme. Ændring af adfærd er det svære.
+
+Takeaway: Investér i datakvalitet før AI. Rækkefølgen betyder noget.`
+],
+  "https://www.superoffice.com/blog/quality-data-and-ai-strategy/": [
+`AI virker kun, hvis din data gør. Det lyder indlysende. Men 60% fejler netop her.
+
+- Garbage in, garbage out — gælder dobbelt for AI.
+- CRM-data er din vigtigste AI-kilde: kontakthistorik, pipeline, kundeadfærd.
+- Rens data én gang. Byg processer der holder den ren.
+
+Takeaway: Din AI-strategi starter i CRM, ikke i modellen.`,
+`De fleste AI-strategier fejler — ikke i implementeringen, men i grundlaget.
+
+- CRM-data er din mest værdifulde AI-kilde.
+- Men de fleste CRM-databaser er 30-50% ufuldstændige.
+- Du kan ikke bygge intelligens på et fundament af gæt.
+
+Takeaway: Rens din CRM-data. Det er din AI-strategi, trin 1.`,
+`AI er ikke magisk. Den er matematisk. Og matematik kræver korrekte input.
+
+- 60% af AI-projekter fejler pga. datakvalitet, ikke algoritmen.
+- Datakvalitet er ikke IT's ansvar. Det er salgslederens.
+
+Takeaway: Din AI-ambition starter med en CRM-oprydning.`
+],
+  "https://www.superoffice.com/blog/superoffice-1-crm-in-the-nordics/": [
+`G2 har talt. SuperOffice er #1 CRM i Norden.
+
+Ikke selvudnævnt. Baseret på vurderinger fra brugerne selv.
+- Højeste score på ease of use og support i kategorien.
+- GDPR-compliant by design — ikke som en eftertanke.
+
+Takeaway: Det er ikke en titel. Det er tillid fra nordiske B2B-virksomheder.`,
+`Brugerne har talt. SuperOffice er #1 CRM i Norden på G2.
+
+- Bedst på ease of use og support i kategorien.
+- Bygget til nordiske forretningsprocesser — ikke tilpasset fra en US-løsning.
+
+Takeaway: De bedste anbefalinger kommer fra dem, der bruger det dagligt.`,
+`Hvad gør et CRM til det bedste i Norden? Ikke features. Fit.
+
+- GDPR-compliance by design.
+- Lokal support der forstår din forretningskontekst.
+- Arbejdsgang der matcher nordisk B2B.
+
+Takeaway: G2 rangerer SuperOffice #1 i Norden. Kunderne forklarer hvorfor.`
+],
+  "https://www.superoffice.com/blog/customer-complaints-good-for-business/": [
+`Kundeklager er ikke problemer. De er gratis produktudvikling.
+
+96% af utilfredse kunder klager ikke — de forsvinder bare.
+- En klage er en chance for retention, hvis du handler hurtigt.
+- CRM logger klagen, tildeler den og sikrer follow-up.
+
+Takeaway: Tak dine klagende kunder. De er dem, der stadig tror på dig.`,
+`De fleste virksomheder frygter kundeklager. De bedste søger dem.
+
+- En klage er et signal: kunden er stadig engageret.
+- Klager håndteret inden for 24 timer øger loyalitet med op til 70%.
+
+Takeaway: Klag-håndtering er retention-strategi. Behandl det som sådan.`,
+`Din mest loyale kunde i morgen er din klagende kunde i dag — hvis du håndterer det rigtigt.
+
+- 70% af kunder der klager og får en god løsning, køber igen.
+- 96% klager aldrig. Ingen chance for at redde forholdet.
+
+Takeaway: Byg et system til at modtage klager. Det er retention-infrastruktur.`
+],
+  "https://www.superoffice.com/blog/response-times/": [
+`Kunderne venter. Konkurrenterne gør det ikke.
+
+90% forventer svar inden for 10 minutter. De fleste virksomheder bruger timer.
+- Automatiseret routing sender sagen til den rigtige person første gang.
+- Fælles CRM-indbakke eliminerer "hvem tager den?"-problemet.
+
+Takeaway: Response-tid er et salgsargument. Ikke bare et support-KPI.`,
+`10 minutter. Det er hvad 90% af kunderne forventer som maksimal svartid.
+
+De fleste support-teams bruger timer. Eller dage.
+- Automatiseret routing sikrer rigtig person fra start.
+- Hurtigere respons = højere NPS = lavere churn.
+
+Takeaway: Svartid er ikke et support-KPI. Det er et forretningsparameter.`,
+`Kunden venter. Konkurrenten svarer. Det er den simple sandhed bag churn.
+
+- Virksomheder der svarer inden 1 time har 7x højere chance for at kvalificere leads.
+- CRM + automatisering = konsistent responstid uanset hvem der er på vagt.
+
+Takeaway: Byg processer der svarer hurtigt. Ikke kulturer der lover det.`
+],
+  "https://www.superoffice.com/blog/customizable-sales-dashboards/": [
+`Hvad du ikke måler, styrer du ikke.
+
+De fleste salgsteams har et dashboard. Færre bruger det aktivt. Forskellen er relevans.
+- Brugerdefinerede views: salgsleder og konsulent ser det der er relevant for dem.
+- Forecasting baseret på aktivitet, ikke mavefornemmelse.
+
+Takeaway: Et dashboard er ikke rapportering. Det er beslutningstagen.`,
+`"Hvad er status på pipeline?" Det burde aldrig være et spørgsmål. Det burde være synligt.
+
+- Real-time data i stedet for manuelle rapporter.
+- Skræddersyede dashboards i CRM: alle ser det der er relevant for dem.
+
+Takeaway: Et godt dashboard gør salgsmødet overflødigt som statusmøde.`,
+`Forecast eller gæt? De fleste pipelines er det sidste, selvom vi kalder det det første.
+
+- 79% af salgsledere er ikke tilfredse med nøjagtigheden af deres forecast.
+- Årsagen: data der ikke er opdateret eller struktureret.
+
+Takeaway: Du kan ikke forbedre det du ikke måler præcist.`
+],
+  "https://www.superoffice.com/blog/sales-pipeline-management-tips/": [
+`De fleste pipelines er en ønskeliste. Ikke en plan.
+
+79% af leads konverterer aldrig — primært pga. manglende follow-up.
+- Struktureret pipeline øger win-rate med 28%.
+- CRM giver overblik over hvad der hænger fast — og hvorfor.
+
+Takeaway: En pipeline er en proces. Ikke et regneark.`,
+`79% af leads konverterer aldrig. Ikke fordi produktet er forkert. Men fordi follow-up mangler.
+
+- De salgsteams der strukturerer pipeline vinder mere. Konsekvent.
+- 12 konkrete strategier til at bygge en pipeline der konverterer.
+
+Takeaway: Pipeline er ikke et pipeline-problem. Det er et disciplin-problem.`,
+`En stærk pipeline har tre ting: volumen, velocity og synlighed. De fleste fokuserer kun på volumen.
+
+- Velocity: hvor hurtigt bevæger deals sig?
+- Synlighed: hvem ejer hvad, og hvad er næste trin?
+
+Takeaway: 12 strategier der gør pipeline til en plan, ikke en ønskeliste.`
+],
+  "https://www.superoffice.com/blog/how-events-accelerate-the-customer-journey/": [
+`Events er ikke markedsføring. De er en accelerator.
+
+Personlig kontakt forkorter salgscyklussen mere end noget andet kanal.
+- Events skaber pipeline-progression der ellers ville tage måneder.
+- CRM tracker hvem der deltog og hvad næste skridt er.
+
+Takeaway: Brug events strategisk. Mål effekten — i CRM.`,
+`Hvad er den hurtigste vej fra "interesseret" til "klar til at købe"? Personlig kontakt.
+
+- Events forkorter salgscyklussen markant.
+- Men kun hvis du tracker hvem der deltog og hvad der blev sagt.
+
+Takeaway: Events uden CRM-tracking er markedsføring. Med CRM-tracking er det pipeline.`,
+`De bedste events skaber ikke leads. De accelererer dem. Der er forskel.
+
+- En lead du møder på event er 5x nemmere at booke møde med efterfølgende.
+- Momentum er kortvarigt — du har 48 timer til at følge op.
+
+Takeaway: Mål dine events i pipeline-progression, ikke i visitkort.`
+],
+  "https://www.superoffice.com/blog/supernotes-and-ethical-ai-in-crm/": [
+`AI i CRM rejser et spørgsmål ingen taler nok om: Hvem ejer mødereferaterne?
+
+SuperNotes holder mødedata i dit CRM. Ikke i en US-sky.
+- GDPR-compliant by design.
+- Dine kundesamtaler er dine — ikke træningsdata for et andet produkt.
+
+Takeaway: Vælg AI-løsninger du kontrollerer. Ikke dem der kontrollerer dig.`,
+`Dine møder med kunder er fortrolige. Er dine mødereferater det?
+
+- SuperNotes holder data i dit CRM — din infrastruktur, dine regler.
+- GDPR-compliant. Ingen data til tredjepart.
+
+Takeaway: Vælg AI du kan stå inde for — overfor dine kunder og lovgivningen.`,
+`"Vi bruger AI til mødereferater." — Hvem gemmer dem, og hvor?
+
+- US-baserede AI: stærk teknologi, svag datasuverænitet.
+- SuperNotes: AI-noter der forbliver i dit CRM og din jurisdiktion.
+
+Takeaway: Det du deler i et møde, bør kontrolleres af dig.`
+],
+  "https://www.superoffice.com/blog/customer-data-silos/": [
+`Dine sælgere bruger 23% af deres tid på at lede efter kundeinfo. Det er to timer om dagen. Spildt.
+
+- Data spredt over mail, Excel og Teams.
+- Ny sælger på en konto? Fra nul. Igen.
+
+Takeaway: Din vigtigste salgsressource er tid. Spild den ikke på datasøgning.`,
+`Ny sælger overtager en konto. Ingen noter. Ingen historik. Fra nul.
+
+Det er prisen for scattered customer data.
+- 23% af sælgernes tid går til at finde information der allerede eksisterer.
+
+Takeaway: Kundehistorik er forretningskapital. Opbevar den derefter.`,
+`Tre steder din kundeinfo bor: Mail. Excel. "Jeg tror Lars har det."
+
+- Gennemsnitlig sælger bruger 23% af arbejdstiden på at finde information.
+- Onboarding tager 3x så lang tid uden centraliseret data.
+
+Takeaway: Stop med at gemme kundeinfo i hoveder og indbakker.`
+],
+  "https://www.superoffice.com/blog/best-crm-for-european-businesses/": [
+`Europæiske virksomheder har specifikke krav. De fleste CRM'er er ikke bygget til dem.
+
+GDPR, datasuverænitet, lokal support — det er ikke nice-to-have. Det er krav.
+- US-CRM: stærk teknologi, svag compliance-profil.
+- Europæisk CRM: bygget til den regulatoriske virkelighed du opererer i.
+
+Takeaway: Vælg et CRM der forstår, at du opererer under europæisk lovgivning.`,
+`GDPR er ikke en ulempe. Det er et salgsargument.
+
+- US-CRM: compliance som eftertanke.
+- Europæisk CRM: compliance by design.
+- Datasuverænitet: kunden ejer data, du kontrollerer opbevaring.
+
+Takeaway: Gør din compliance til en styrke, ikke en byrde.`,
+`"Det passer ikke helt til vores processer." Det hører man ofte om globale CRM'er.
+
+- Nordisk B2B har specifikke arbejdsgange og forventninger.
+- Lokal support der forstår din kontekst er ikke nice-to-have.
+
+Takeaway: Fit trumfer features. Vælg et CRM bygget til din virkelighed.`
+]
+};
+
+const HISTORY = [
+  {date:"2026-06-22",day:"Mandag",count:12,chosen:"CRM and ERP integration: Why your numbers don't add up",post:true},
+  {date:"2026-06-19",day:"Torsdag",count:12,chosen:"50+ CRM statistics that matter in 2026",post:true},
+  {date:"2026-06-16",day:"Mandag",count:11,chosen:null,post:false},
+  {date:"2026-06-12",day:"Torsdag",count:11,chosen:"Quality data is the backbone of any AI strategy",post:true},
+  {date:"2026-06-09",day:"Mandag",count:10,chosen:"SuperOffice CRM is the #1 CRM in the Nordics",post:true},
+  {date:"2026-06-05",day:"Torsdag",count:10,chosen:null,post:false}
+];
+
+function parseDate(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
+function fmtDate(s){return parseDate(s).toLocaleDateString('da-DK',{day:'numeric',month:'short',year:'numeric'});}
+function fmtDateShort(d){return d.toLocaleDateString('da-DK',{day:'numeric',month:'short'});}
+function getLastWeekday(from,target){const d=new Date(from.getFullYear(),from.getMonth(),from.getDate());while(d.getDay()!==target)d.setDate(d.getDate()-1);return d;}
+function computeCutoff(today){const day=today.getDay();let lr;if(day===1||day===4)lr=new Date(today);else{const lm=getLastWeekday(today,1),lt=getLastWeekday(today,4);lr=lm>lt?lm:lt;}if(lr.getDay()===1)return{cutoff:getLastWeekday(new Date(lr-86400000),4),cutoffLabel:'torsdag'};return{cutoff:getLastWeekday(new Date(lr-86400000),1),cutoffLabel:'mandag'};}
+function getNextRuns(from,count){const r=[],d=new Date(from.getFullYear(),from.getMonth(),from.getDate());d.setDate(d.getDate()+1);while(r.length<count){const w=d.getDay();if(w===1||w===4)r.push({date:d.toISOString().slice(0,10),day:w===1?'Mandag':'Torsdag'});d.setDate(d.getDate()+1);}return r;}
+
+const today=new Date();
+document.getElementById('header-meta').textContent=today.toLocaleDateString('da-DK',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+const {cutoff,cutoffLabel}=computeCutoff(today);
+
+// History
+const htbody=document.getElementById('history-tbody');
+HISTORY.forEach(h=>{const tr=document.createElement('tr');tr.innerHTML=`<td class="date-val">${fmtDate(h.date)}</td><td class="date-val">${h.day}</td><td class="date-val">${h.count}</td><td>${h.chosen?`<span class="chosen-article" title="${h.chosen}">${h.chosen}</span>`:'<span class="no-chosen">–</span>'}</td><td class="c"><span class="run-status"><span class="dot ${h.post?'dot-done':'dot-skipped'}"></span><span style="font-size:12.5px;color:var(--muted)">${h.post?'Genereret':'Ingen'}</span></span></td>`;htbody.appendChild(tr);});
+
+// Scheduled
+const stbody=document.getElementById('scheduled-tbody');
+getNextRuns(today,10).forEach((r,i)=>{const tr=document.createElement('tr');if(i===0)tr.classList.add('next-run');tr.innerHTML=`<td class="date-val">${fmtDate(r.date)}</td><td class="date-val">${r.day}</td><td class="date-val">08:00</td><td class="c"><span class="run-status"><span class="dot dot-planned"></span><span style="font-size:12.5px;color:var(--muted)">${i===0?'<strong>Næste</strong>':'Planlagt'}</span></span></td>`;stbody.appendChild(tr);});
+
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById('tab-'+btn.dataset.tab).classList.add('active');});});
+
+// Fetch articles from data.json
+fetch('data.json?v='+Date.now())
+  .then(r=>r.json())
+  .then(data=>{
+    const articles=data.articles||[];
+    const fetched=data.fetched||'';
+    let newCount=0;
+    const tbody=document.getElementById('article-tbody');
+    tbody.innerHTML='';
+    articles.forEach(a=>{
+      const isNew=parseDate(a.date)>cutoff;
+      if(isNew)newCount++;
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td><a class="article-link" href="${a.url}" target="_blank" rel="noopener">${a.title}</a></td><td class="date-val">${fmtDate(a.date)}</td><td class="c">${isNew?'<span class="badge-ny">NY</span>':'<span class="dash">–</span>'}</td><td class="r"><button class="btn btn-coral btn-lav" data-title="${a.title.replace(/"/g,'&quot;')}" data-url="${a.url}">Lav opslag →</button></td>`;
+      tbody.appendChild(tr);
+    });
+    const badge=document.getElementById('new-badge');
+    if(newCount>0){badge.textContent=newCount+' ny'+(newCount>1?'e':'');badge.className='pill pill-coral';}
+    else{badge.textContent='Ingen nye siden '+cutoffLabel;badge.className='pill pill-muted';}
+    document.getElementById('cutoff-banner').innerHTML=`Markeret <strong>NY</strong> hvis publiceret efter ${cutoffLabel} ${fmtDateShort(cutoff)} &nbsp;·&nbsp; Opdateret: ${fetched}<span class="fetched-note">· Kører automatisk man &amp; tor kl. 08:00</span>`;
+  })
+  .catch(()=>{
+    document.getElementById('article-tbody').innerHTML='<tr><td colspan="4" class="loading">Kunne ikke hente artikler.</td></tr>';
+  });
+
+// Drawer
+const overlay=document.getElementById('overlay');
+const drawerTitle=document.getElementById('drawer-title');
+const postBox=document.getElementById('post-box');
+const copyConfirm=document.getElementById('copy-confirm');
+const charCount=document.getElementById('char-count');
+const versionIndicator=document.getElementById('version-indicator');
+let currentUrl='',currentVersionIdx=0;
+
+function updatePost(){const v=POSTS[currentUrl]||['Opslag ikke tilgængeligt.'];const p=v[currentVersionIdx];postBox.textContent=p;const l=p.length;charCount.textContent=l+' tegn';charCount.className='char-count'+(l>3000?' over':'');versionIndicator.textContent='Version '+(currentVersionIdx+1)+' af '+v.length;copyConfirm.classList.remove('show');}
+function openDrawer(title,url){currentUrl=url;currentVersionIdx=0;drawerTitle.textContent=title;updatePost();overlay.classList.add('open');}
+
+document.addEventListener('click',e=>{const btn=e.target.closest('.btn-lav');if(btn)openDrawer(btn.dataset.title,btn.dataset.url);});
+document.getElementById('btn-close').addEventListener('click',()=>overlay.classList.remove('open'));
+overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open');});
+document.getElementById('btn-copy').addEventListener('click',()=>{navigator.clipboard.writeText(postBox.textContent).then(()=>{copyConfirm.classList.add('show');setTimeout(()=>copyConfirm.classList.remove('show'),2000);});});
+document.getElementById('btn-regen').addEventListener('click',()=>{const v=POSTS[currentUrl]||[''];currentVersionIdx=(currentVersionIdx+1)%v.length;updatePost();});
+</script>
+</body>
+</html>
