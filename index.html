@@ -153,7 +153,7 @@
   <div class="tab-panel" id="tab-historik">
     <div class="status-bar">
       <span class="section-label">Kørselshistorik</span>
-      <span class="pill pill-muted">Demo-data</span>
+      <span class="pill pill-green" id="history-pill">Indlæser…</span>
     </div>
     <div class="card">
       <div style="overflow-x:auto;">
@@ -168,7 +168,7 @@
   <div class="tab-panel" id="tab-planlagt">
     <div class="status-bar">
       <span class="section-label">Kommende kørsler</span>
-      <span class="pill pill-green">Man &amp; tor · kl. 08:00</span>
+      <span class="pill pill-green">Man, ons &amp; fre · kl. 08:00</span>
     </div>
     <div class="card">
       <div style="overflow-x:auto;">
@@ -473,30 +473,37 @@ Takeaway: Fit trumfer features. Vælg et CRM bygget til din virkelighed.`
 ]
 };
 
-const HISTORY = [
-  {date:"2026-06-22",day:"Mandag",count:12,chosen:"CRM and ERP integration: Why your numbers don't add up",post:true},
-  {date:"2026-06-19",day:"Torsdag",count:12,chosen:"50+ CRM statistics that matter in 2026",post:true},
-  {date:"2026-06-16",day:"Mandag",count:11,chosen:null,post:false},
-  {date:"2026-06-12",day:"Torsdag",count:11,chosen:"Quality data is the backbone of any AI strategy",post:true},
-  {date:"2026-06-09",day:"Mandag",count:10,chosen:"SuperOffice CRM is the #1 CRM in the Nordics",post:true},
-  {date:"2026-06-05",day:"Torsdag",count:10,chosen:null,post:false}
-];
 
 function parseDate(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
 function fmtDate(s){return parseDate(s).toLocaleDateString('da-DK',{day:'numeric',month:'short',year:'numeric'});}
 function fmtDateShort(d){return d.toLocaleDateString('da-DK',{day:'numeric',month:'short'});}
-function getLastWeekday(from,target){const d=new Date(from.getFullYear(),from.getMonth(),from.getDate());while(d.getDay()!==target)d.setDate(d.getDate()-1);return d;}
-function computeCutoff(today){const day=today.getDay();let lr;if(day===1||day===4)lr=new Date(today);else{const lm=getLastWeekday(today,1),lt=getLastWeekday(today,4);lr=lm>lt?lm:lt;}if(lr.getDay()===1)return{cutoff:getLastWeekday(new Date(lr-86400000),4),cutoffLabel:'torsdag'};return{cutoff:getLastWeekday(new Date(lr-86400000),1),cutoffLabel:'mandag'};}
-function getNextRuns(from,count){const r=[],d=new Date(from.getFullYear(),from.getMonth(),from.getDate());d.setDate(d.getDate()+1);while(r.length<count){const w=d.getDay();if(w===1||w===4)r.push({date:d.toISOString().slice(0,10),day:w===1?'Mandag':'Torsdag'});d.setDate(d.getDate()+1);}return r;}
+const SCHED_DAYS=[1,3,5];
+const DAY_NAMES={1:'Mandag',3:'Onsdag',5:'Fredag'};
+function getPrevScheduleDay(from){const d=new Date(from.getFullYear(),from.getMonth(),from.getDate()-1);while(!SCHED_DAYS.includes(d.getDay()))d.setDate(d.getDate()-1);return d;}
+function computeCutoff(today){const d=new Date(today.getFullYear(),today.getMonth(),today.getDate());while(!SCHED_DAYS.includes(d.getDay()))d.setDate(d.getDate()-1);const cutoff=getPrevScheduleDay(d);return{cutoff,cutoffLabel:DAY_NAMES[cutoff.getDay()].toLowerCase()};}
+function getNextRuns(from,count){const r=[],d=new Date(from.getFullYear(),from.getMonth(),from.getDate());d.setDate(d.getDate()+1);while(r.length<count){const w=d.getDay();if(SCHED_DAYS.includes(w))r.push({date:d.toISOString().slice(0,10),day:DAY_NAMES[w]});d.setDate(d.getDate()+1);}return r;}
 
 const today=new Date();
 document.getElementById('header-meta').textContent=today.toLocaleDateString('da-DK',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
 const {cutoff,cutoffLabel}=computeCutoff(today);
 
-// History
-const htbody=document.getElementById('history-tbody');
-HISTORY.forEach(h=>{const tr=document.createElement('tr');tr.innerHTML=`<td class="date-val">${fmtDate(h.date)}</td><td class="date-val">${h.day}</td><td class="date-val">${h.count}</td><td>${h.chosen?`<span class="chosen-article" title="${h.chosen}">${h.chosen}</span>`:'<span class="no-chosen">–</span>'}</td><td class="c"><span class="run-status"><span class="dot ${h.post?'dot-done':'dot-skipped'}"></span><span style="font-size:12.5px;color:var(--muted)">${h.post?'Genereret':'Ingen'}</span></span></td>`;htbody.appendChild(tr);});
+// History from history.json
+fetch('history.json?v='+Date.now())
+  .then(r=>r.json())
+  .then(history=>{
+    const htbody=document.getElementById('history-tbody');
+    htbody.innerHTML='';
+    history.forEach(h=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td class="date-val">${fmtDate(h.date)}</td><td class="date-val">${h.day}</td><td class="date-val">${h.count}</td><td>${h.newest?`<span class="chosen-article" title="${h.newest}">${h.newest}</span>`:'<span class="no-chosen">–</span>'}</td><td class="c"><span class="run-status"><span class="dot ${h.status==='success'?'dot-done':'dot-skipped'}"></span><span style="font-size:12.5px;color:var(--muted)">${h.status==='success'?'Opdateret':'Fejl'}</span></span></td>`;
+      htbody.appendChild(tr);
+    });
+    const pill=document.getElementById('history-pill');
+    pill.textContent=history.length+' kørsler';
+    pill.className='pill pill-green';
+  })
+  .catch(()=>{document.getElementById('history-pill').textContent='Fejl';});
 
 // Scheduled
 const stbody=document.getElementById('scheduled-tbody');
@@ -524,7 +531,7 @@ fetch('data.json?v='+Date.now())
     const badge=document.getElementById('new-badge');
     if(newCount>0){badge.textContent=newCount+' ny'+(newCount>1?'e':'');badge.className='pill pill-coral';}
     else{badge.textContent='Ingen nye siden '+cutoffLabel;badge.className='pill pill-muted';}
-    document.getElementById('cutoff-banner').innerHTML=`Markeret <strong>NY</strong> hvis publiceret efter ${cutoffLabel} ${fmtDateShort(cutoff)} &nbsp;·&nbsp; Opdateret: ${fetched}<span class="fetched-note">· Kører automatisk man &amp; tor kl. 08:00</span>`;
+    document.getElementById('cutoff-banner').innerHTML=`Markeret <strong>NY</strong> hvis publiceret efter ${cutoffLabel} ${fmtDateShort(cutoff)} &nbsp;·&nbsp; Opdateret: ${fetched}<span class="fetched-note">· Kører automatisk man, ons &amp; fre kl. 08:00</span>`;
   })
   .catch(()=>{
     document.getElementById('article-tbody').innerHTML='<tr><td colspan="4" class="loading">Kunne ikke hente artikler.</td></tr>';
